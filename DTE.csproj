@@ -197,6 +197,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="LastWorking\settings" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -220,6 +221,24 @@
     <Content Include="DLLS\System.Threading.Tasks.Extensions.dll" />
     <Content Include="DLLS\System.ValueTuple.dll" />
     <Content Include="DLLS\System.Windows.Interactivity.dll" />
+    <Content Include="LastWorking\AurelienRibon.Ui.SyntaxHighlightBox.dll" />
+    <Content Include="LastWorking\ControlzEx.dll" />
+    <Content Include="LastWorking\Dapper.Contrib.dll" />
+    <Content Include="LastWorking\Dapper.dll" />
+    <Content Include="LastWorking\Dragablz.dll" />
+    <Content Include="LastWorking\DTE.exe" />
+    <Content Include="LastWorking\GlobalExPro.dll" />
+    <Content Include="LastWorking\Google.Protobuf.dll" />
+    <Content Include="LastWorking\ICSharpCode.AvalonEdit.dll" />
+    <Content Include="LastWorking\MahApps.Metro.dll" />
+    <Content Include="LastWorking\MahApps.Metro.IconPacks.dll" />
+    <Content Include="LastWorking\ModelGen.exe" />
+    <Content Include="LastWorking\MySql.Data.dll" />
+    <Content Include="LastWorking\Npgsql.dll" />
+    <Content Include="LastWorking\System.Runtime.CompilerServices.Unsafe.dll" />
+    <Content Include="LastWorking\System.Threading.Tasks.Extensions.dll" />
+    <Content Include="LastWorking\System.ValueTuple.dll" />
+    <Content Include="LastWorking\System.Windows.Interactivity.dll" />
     <Content Include="Resources\settings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
