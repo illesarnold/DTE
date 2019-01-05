@@ -1,0 +1,52 @@
+﻿<mahapps:MetroWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:DTE.Views.Windows"
+        xmlns:ViewModels="clr-namespace:DTE.ViewModels" x:Class="DTE.Views.Windows.DataAnnotationsWindow"
+        Dialog:DialogParticipation.Register="{Binding}"
+        mc:Ignorable="d"
+        Title="DataAnnotations settings" Height="308.898" Width="615.042">
+    <mahapps:MetroWindow.DataContext>
+        <ViewModels:DataAnnotationsVM/>
+    </mahapps:MetroWindow.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid >
+            <StackPanel Margin="5">
+                <DockPanel Margin="5">
+                    <Label Content="Key" Width="100"/>
+                    <TextBox Text="{Binding Settings.Settings.Attributes.Key}" VerticalContentAlignment="Center" MinWidth="150"></TextBox>
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <Label Content="ExplicitKey" Width="100"/>
+                    <TextBox Text="{Binding Settings.Settings.Attributes.ExplicitKey}" VerticalContentAlignment="Center" MinWidth="150"></TextBox>
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <Label Content="Table" Width="100"/>
+                    <TextBox Text="{Binding Settings.Settings.Attributes.Table}" VerticalContentAlignment="Center" MinWidth="150"></TextBox>
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <Label Content="Write" Width="100"/>
+                    <TextBox Text="{Binding Settings.Settings.Attributes.Write}" VerticalContentAlignment="Center" MinWidth="150"></TextBox>
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <Label Content="Computed" Width="100"/>
+                    <TextBox Text="{Binding Settings.Settings.Attributes.Computed}" VerticalContentAlignment="Center" MinWidth="150"></TextBox>
+                </DockPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Height="30" Command="{Binding Save}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Margin="5" Width="150" Content="Save"/>
+                <Button Height="30" Margin="5" Width="150" Content="Cancel" Click="Button_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</mahapps:MetroWindow>
