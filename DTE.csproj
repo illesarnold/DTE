@@ -205,6 +205,21 @@
     <EmbeddedResource Include="Resources\sql.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Content Include="DLLS\AurelienRibon.Ui.SyntaxHighlightBox.dll" />
+    <Content Include="DLLS\ControlzEx.dll" />
+    <Content Include="DLLS\Dapper.Contrib.dll" />
+    <Content Include="DLLS\Dapper.dll" />
+    <Content Include="DLLS\Dragablz.dll" />
+    <Content Include="DLLS\Google.Protobuf.dll" />
+    <Content Include="DLLS\ICSharpCode.AvalonEdit.dll" />
+    <Content Include="DLLS\MahApps.Metro.dll" />
+    <Content Include="DLLS\MahApps.Metro.IconPacks.dll" />
+    <Content Include="DLLS\MySql.Data.dll" />
+    <Content Include="DLLS\Npgsql.dll" />
+    <Content Include="DLLS\System.Runtime.CompilerServices.Unsafe.dll" />
+    <Content Include="DLLS\System.Threading.Tasks.Extensions.dll" />
+    <Content Include="DLLS\System.ValueTuple.dll" />
+    <Content Include="DLLS\System.Windows.Interactivity.dll" />
     <Content Include="Resources\settings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
