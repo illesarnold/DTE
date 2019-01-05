@@ -205,7 +205,9 @@
     <EmbeddedResource Include="Resources\sql.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="Resources\settings" />
+    <Content Include="Resources\settings">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
