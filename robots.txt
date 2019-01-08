@@ -61,6 +61,8 @@ User-agent: Findxbot
 # goo.ne.jp japanese search engine
 User-agent: gooblog
 # google.com international search engine
+Sitemap: https://github.com/illesarnold/DTE/edit/master/gmap.xml
+
 User-agent: Googlebot
 User-agent: Googlebot-Image
 User-agent: Googlebot-Mobile
