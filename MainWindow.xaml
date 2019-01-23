@@ -55,6 +55,10 @@
                     <TextBox Margin="5"  HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.Prefix, UpdateSourceTrigger=PropertyChanged}" />
                     <mahapp:MetroHeader Margin="5" Header="Postfix"/>
                     <TextBox Margin="5"   HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.Postfix, UpdateSourceTrigger=PropertyChanged}"/>
+                    <mahapp:MetroHeader Margin="5" Header="CRUD prefix"/>
+                    <TextBox Margin="5"   HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.CRUD_prefix, UpdateSourceTrigger=PropertyChanged}"/>
+                    <mahapp:MetroHeader Margin="5" Header="CRUD postfix"/>
+                    <TextBox Margin="5"   HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.CRUD_postfix, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </mahapp:Flyout>
         </mahapp:FlyoutsControl>

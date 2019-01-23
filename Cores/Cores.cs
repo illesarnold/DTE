@@ -225,7 +225,7 @@ namespace DTE.Cores
             string tableU = FirstCharToUpper(tablename);
             string ModelName = _settings.Prefix + ColumnNameToPropName(tablename).Replace("_", "") + _settings.Postfix;
             string result = $@"
-public class {tableU}Core 
+public class {_settings.CRUD_prefix}{tableU}{_settings.CRUD_postfix} 
 {{
     // USE Dapper and Dapper Contrib nugate
                                     
@@ -242,42 +242,34 @@ public class {tableU}Core
     /// <returns>Entity</returns>
     public {ModelName} Get_{tableU}(int id)
     {{
-        connection.Open();
         return connection.Get<{ModelName}>(id);
     }}
     public List<{ModelName}> GetAll_{tableU}()
     {{
-        connection.Open();
         return connection.GetAll<{ModelName}>().ToList();
     }}
     public long Insert_{tableU}({ModelName} {tablename})
     {{
-        connection.Open();
         return connection.Insert({tablename});
     }}
     public long Insert_{tableU}(List<{ModelName}> {tablename})
     {{
-        connection.Open();
         return connection.Insert({tablename});
     }}
     public bool Update_{tableU}({ModelName} {tablename})
     {{
-        connection.Open();
         return connection.Update({tablename});
     }}
     public bool Update_{tableU}(List<{ModelName}> {tablename})
     {{
-        connection.Open();
         return connection.Update({tablename});
     }}
     public bool Delete_{tableU}({ModelName} {tablename})
     {{
-        connection.Open();
         return connection.Delete({tablename});
     }}
     public bool Delete_{tableU}(List<{ModelName}> {tablename})
     {{
-        connection.Open();
         return connection.Delete({tablename});
     }}
 }}";
