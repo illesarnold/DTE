@@ -750,8 +750,36 @@ namespace DTE.Models
             }
         }
 
-      
         
+        bool _fullProp;
+        public bool FullProp
+        {
+            get
+            {
+                return _fullProp;
+            }
+        
+            set
+            {
+                _fullProp = value;
+        	   OnPropertyChanged();
+            }
+        }
+        
+        bool _dataMember;
+        public bool DataMember
+        {
+            get
+            {
+                return _dataMember;
+            }
+        
+            set
+            {
+                _dataMember = value;
+        	   OnPropertyChanged();
+            }
+        }
 
     }
 

@@ -51,6 +51,24 @@
                                    Margin="5"
                                    
                                    Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                    <mahapp:ToggleSwitch
+                                   Header="FullProp"
+                                   IsChecked="{Binding Settings.Settings.FullProp}"
+                                   Margin="5"
+                                   
+                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                    <mahapp:ToggleSwitch
+                                   Header="DataAnnotations"
+                                   IsChecked="{Binding Settings.Settings.DataAnnotations}"
+                                   Margin="5"
+                                   
+                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                    <mahapp:ToggleSwitch
+                                   Header="DataMember"
+                                   IsChecked="{Binding Settings.Settings.DataMember}"
+                                   Margin="5"
+                                   
+                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:MetroHeader Margin="5" Header="Prefix"/>
                     <TextBox Margin="5"  HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.Prefix, UpdateSourceTrigger=PropertyChanged}" />
                     <mahapp:MetroHeader Margin="5" Header="Postfix"/>

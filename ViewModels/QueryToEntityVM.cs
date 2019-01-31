@@ -19,13 +19,17 @@ namespace DTE.ViewModels
 
         }
 
-        public QueryToEntityVM(IDialogCoordinator instance, ConnectionModel connection = null)
+        public QueryToEntityVM(IDialogCoordinator instance, ConnectionModel connection = null,string databaseName = null)
         {
             _dialogCoordinator = instance;
             if (connection != null)
             {
                 Type = connection.ConnType;
                 ConnString = GetConnString(connection);
+            }
+            if (databaseName != null)
+            {
+                ConnString += $"database={databaseName};";
             }
         }
         public RelayCommand CreateCommand

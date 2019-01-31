@@ -30,9 +30,15 @@ namespace DTE.ViewModels
 
         private void SelectToEntity()
         {
+            string databaseName = null;
+            if (SelectedNode is Database)
+                databaseName =  (SelectedNode as Database).DatabaseName;
+
             var tree = (SelectedNode as ITreeViewModel)?.ParentTreeBase;
 
-            var sToEntWin = new QueryToEntityWindow(tree);
+         
+
+            var sToEntWin = new QueryToEntityWindow(tree,databaseName);
             var res = sToEntWin.ShowDialog();
             if (res != null && res == true)
             {
