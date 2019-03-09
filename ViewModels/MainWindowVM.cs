@@ -33,6 +33,8 @@ namespace DTE.ViewModels
             string databaseName = null;
             if (SelectedNode is Database)
                 databaseName =  (SelectedNode as Database).DatabaseName;
+            else if (SelectedNode is Table)
+                databaseName = (SelectedNode as Table).DataBaseName;
 
             var tree = (SelectedNode as ITreeViewModel)?.ParentTreeBase;
 

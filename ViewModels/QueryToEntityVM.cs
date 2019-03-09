@@ -29,7 +29,7 @@ namespace DTE.ViewModels
             }
             if (databaseName != null)
             {
-                ConnString += $"database={databaseName};";
+                ConnString += $";database={databaseName};";
             }
         }
         public RelayCommand CreateCommand
@@ -43,12 +43,13 @@ namespace DTE.ViewModels
         private async void CreateAsync(object window)
         {
             Window win = window as Window;
-            SettingsCore settings = new SettingsCore();
-            settings.SettingsSerialize();
-            var cc = new Cores.ConnectionCore(new ConnectionModel(Type,ConnString));
             string entity = "";
+            ConnectionCore cc = null;
             try
             {
+                SettingsCore settings = new SettingsCore();
+                settings.SettingsSerialize();
+                cc = new Cores.ConnectionCore(new ConnectionModel(Type,ConnString));
                 entity = cc.CreateModel(Document.Text,settings.Settings);
             }
             catch (Exception ex)
@@ -57,10 +58,9 @@ namespace DTE.ViewModels
                 return;
             }
 
-            if(cc.Errors.Count > 0)
+            if(cc != null && cc.Errors.Count > 0)
             {
                 await _dialogCoordinator.ShowMessageAsync(this, $"Error!", $"Error message: {cc.Errors.First().Message}  /r/nStackTrace: {cc.Errors.First().StackTrace}");
-
             }
             else
             {
