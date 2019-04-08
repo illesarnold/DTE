@@ -118,7 +118,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != connectionName) connectionName = value;
+                if (value != null && value != connectionName) connectionName = value;
                 OnPropertyChanged();
             }
         }
@@ -171,7 +171,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != host) host = value;
+                if (value != null && value != host) host = value;
                 OnPropertyChanged();
             }
         }
@@ -186,7 +186,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != userName) userName = value;
+                if (value != null && value != userName) userName = value;
                 OnPropertyChanged();
             }
         }
@@ -201,7 +201,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != password) password = value;
+                if (value != null && value != password) password = value;
                 OnPropertyChanged();
             }
         }
@@ -553,7 +553,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _dataBaseName) _dataBaseName = value;
+                if (value != null && value != _dataBaseName) _dataBaseName = value;
                 OnPropertyChanged();
             }
         }
@@ -593,7 +593,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _attributes) _attributes = value;
+                if (value != null && value != _attributes) _attributes = value;
                 OnPropertyChanged();
             }
         }
@@ -608,7 +608,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _types) _types = value;
+                if (value != null && value != _types) _types = value;
                 OnPropertyChanged();
             }
         }
@@ -719,9 +719,69 @@ namespace DTE.Models
                 OnPropertyChanged();
             }
         }
+
+        string _cRUD_prefix;
+        public string CRUD_prefix
+        {
+            get
+            {
+                return _cRUD_prefix;
+            }
+        
+            set
+            {
+                if (value != null && value != _cRUD_prefix) _cRUD_prefix = value;
+        	 	OnPropertyChanged();
+            }
+        }
+
+        string _cRUD_postfix;
+        public string CRUD_postfix
+        {
+            get
+            {
+                return _cRUD_postfix;
+            }
+        
+            set
+            {
+                if (value != null && value != _cRUD_postfix) _cRUD_postfix = value;
+        	 	OnPropertyChanged();
+            }
+        }
+
+        
+        bool _fullProp;
+        public bool FullProp
+        {
+            get
+            {
+                return _fullProp;
+            }
+        
+            set
+            {
+                _fullProp = value;
+        	   OnPropertyChanged();
+            }
+        }
+        
+        bool _dataMember;
+        public bool DataMember
+        {
+            get
+            {
+                return _dataMember;
+            }
+        
+            set
+            {
+                _dataMember = value;
+        	   OnPropertyChanged();
+            }
+        }
+
     }
-
-
 
     [Serializable]
     public class Attributes : DataBindingBase45
@@ -738,7 +798,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _key) _key = value;
+                if (value != null && value != _key) _key = value;
                 OnPropertyChanged();
             }
         }
@@ -753,7 +813,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _explicitKey) _explicitKey = value;
+                if (value != null && value != _explicitKey) _explicitKey = value;
                 OnPropertyChanged();
             }
         }
@@ -768,7 +828,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _table) _table = value;
+                if (value != null && value != _table) _table = value;
                 OnPropertyChanged();
             }
         }
@@ -784,7 +844,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _write) _write = value;
+                if (value != null && value != _write) _write = value;
                 OnPropertyChanged();
             }
         }
@@ -799,7 +859,7 @@ namespace DTE.Models
 
             set
             {
-                if (value != null || value != _computed) _computed = value;
+                if (value != null && value != _computed) _computed = value;
                 OnPropertyChanged();
             }
         }

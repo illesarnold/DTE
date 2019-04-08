@@ -48,13 +48,13 @@ namespace DTE.Views.Windows
             }
         }
 
-        public QueryToEntityWindow(Models.TreeViewModel treeViewModel)
+        public QueryToEntityWindow(Models.TreeViewModel treeViewModel,string databaseName)
         {
             InitializeComponent();
             this.Loaded += SelectToEntity_Loaded;
             if (treeViewModel != null)
             {
-                vm = new QueryToEntityVM(DialogCoordinator.Instance, treeViewModel.Connection);
+                vm = new QueryToEntityVM(DialogCoordinator.Instance, treeViewModel.Connection,databaseName);
             }
             else
             {

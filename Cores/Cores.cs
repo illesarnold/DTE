@@ -91,7 +91,7 @@ namespace DTE.Cores
         {
 
             DataTable dt = GetFirstRowWithSchemaInfo(tablename, database);
-          
+
             return CreateModel(dt);
         }
         public string CreateModel(string query, Settings settings)
@@ -105,14 +105,15 @@ namespace DTE.Cores
         private string CreateModel(DataTable dt)
         {
 
-            var tablename = dt.TableName ;
-   
+            var tablename = dt.TableName;
 
 
-                string model = "";
+
+            string model = "";
             if (_settings.DataAnnotations)
                 model += $"[{_settings.Attributes.Table}(\"{tablename}\")] \r\n";
-
+            if (_settings.DataMember)
+                model += $"\t[DataContract]\r\n";
             model += $"public class {_settings.Prefix}{ColumnNameToPropName(tablename).Replace("_", "")}{_settings.Postfix}\r\n{{\r\n";
             foreach (DataColumn item in dt.Columns)
             {
@@ -127,23 +128,84 @@ namespace DTE.Cores
                     comment = $"\t //  COL NAME: {columnInfo.ColumnName} \t TYPE: {columnInfo.Type} \t NULL: {columnInfo.Nullable} \t AUTO INC.: {columnInfo.Extra} \t DEF: {columnInfo.Def}";
                 if (columnInfo.Key)
                 {
-                    if (_settings.DataAnnotations && columnInfo.Extra)
-                        model += $"\t[{_settings.Attributes.Key}]\r\n";
-                    if (_settings.DataAnnotations && columnInfo.Extra == false)
-                        model += $"\t[{_settings.Attributes.ExplicitKey}]\r\n";
+                  
 
-                   
+                    if (_settings.FullProp)
+                    {
+                        model += $@"
+    private {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} _{columnInfo.ColumnName};
+                                   ";
+
+                        if (_settings.DataAnnotations && columnInfo.Extra)
+                            model += $"     [{_settings.Attributes.Key}]\r\n";
+
+                        if (_settings.DataAnnotations && columnInfo.Extra == false)
+                            model += $"     [{_settings.Attributes.ExplicitKey}]\r\n";
+                        if (_settings.DataMember)
+                            model += $"     [DataMember]\r\n";
+                        model += $@"    public {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} 
+    {{ 
+        get
+        {{
+            return _{columnInfo.ColumnName};
+        }}
+        
+        set
+        {{
+            _{columnInfo.ColumnName} = value;
+        	OnPropertyChanged();
+        }}
+    }} {comment} ";
+                    }
+                    else
+                    {
+                        if (_settings.DataAnnotations && columnInfo.Extra)
+                            model += $"     [{_settings.Attributes.Key}]\r\n";
+                        if (_settings.DataMember)
+                            model += $"     [DataMember]\r\n";
+                        if (_settings.DataAnnotations && columnInfo.Extra == false)
+                            model += $"     [{_settings.Attributes.ExplicitKey}]\r\n";
                         model += $"\tpublic {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} {{ get; set; }} {comment} \r\n";
-                    
+                    }
+
+
                 }
                 else
                 {
-                   
-                    
+
+                    if (_settings.FullProp)
+                    {
+                        model += $@"
+    private {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} _{columnInfo.ColumnName};
+                                   ";
+
+                        if (_settings.DataMember)
+                            model += $"     [DataMember]\r\n";
+
+                        model += $@"    public {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} 
+    {{ 
+        get
+        {{
+            return _{columnInfo.ColumnName};
+        }}
+        
+        set
+        {{
+            _{columnInfo.ColumnName} = value;
+        	OnPropertyChanged();
+        }}
+    }} {comment} ";
+
+                    }
+                    else
+                    {
+                        if (_settings.DataMember)
+                            model += $"     [DataMember]\r\n";
                         model += $"\tpublic {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} {{ get; set; }} {comment} \r\n";
-                    
+                    }
+
                 }
-                
+
 
             }
             return model += "}";
@@ -158,7 +220,7 @@ namespace DTE.Cores
 
             }
 
-            
+
             public ColumnInfo(DataTable dt, DataColumn column, ConnectionTypes connectionType)
             {
                 Get_ColumnInfo(dt, column, connectionType);
@@ -170,7 +232,7 @@ namespace DTE.Cores
             public bool Extra { get; set; }
             public string Def { get; set; }
 
-          
+
 
             private void Get_ColumnInfo(DataTable dt, DataColumn column, ConnectionTypes connectionType)
             {
@@ -224,60 +286,64 @@ namespace DTE.Cores
             DataTable dt = GetFirstRowWithSchemaInfo(tablename, database);
             string tableU = FirstCharToUpper(tablename);
             string ModelName = _settings.Prefix + ColumnNameToPropName(tablename).Replace("_", "") + _settings.Postfix;
+            var staticString = "";
+            var constructor = "";
+            var classname = _settings.CRUD_prefix + tableU + _settings.CRUD_postfix;
+            if (_settings.Static)
+            {
+                staticString = "static";
+            }
+            else
+            {
+                constructor = $@"
+    private IDbConnection connection;
+    public {classname}(IDbConnection _connection)
+    {{
+            this.connection = _connection;
+    }}";
+            }
+
             string result = $@"
-public class {tableU}Core 
+public class {classname}
 {{
     // USE Dapper and Dapper Contrib nugate
                                     
-
-    private IDbConnection connection;
-
-    public {tableU}Core(IDbConnection _connection)
-    {{
-            this.connection = _connection;
-    }}
+    {constructor}
+    
     /// <summary>
     /// Get a single entity by ID.
     /// </summary>
     /// <returns>Entity</returns>
-    public {ModelName} Get_{tableU}(int id)
+    public {staticString} {ModelName} Get_{tableU}(uint id)
     {{
-        connection.Open();
         return connection.Get<{ModelName}>(id);
     }}
-    public List<{ModelName}> GetAll_{tableU}()
+    public {staticString} List<{ModelName}> GetAll_{tableU}()
     {{
-        connection.Open();
         return connection.GetAll<{ModelName}>().ToList();
     }}
-    public long Insert_{tableU}({ModelName} {tablename})
+    public {staticString} long Insert_{tableU}({ModelName} {tablename})
     {{
-        connection.Open();
         return connection.Insert({tablename});
     }}
-    public long Insert_{tableU}(List<{ModelName}> {tablename})
+    public {staticString} long Insert_{tableU}(List<{ModelName}> {tablename})
     {{
-        connection.Open();
         return connection.Insert({tablename});
     }}
-    public bool Update_{tableU}({ModelName} {tablename})
+    public {staticString} bool Update_{tableU}({ModelName} {tablename})
     {{
-        connection.Open();
         return connection.Update({tablename});
     }}
-    public bool Update_{tableU}(List<{ModelName}> {tablename})
+    public {staticString} bool Update_{tableU}(List<{ModelName}> {tablename})
     {{
-        connection.Open();
         return connection.Update({tablename});
     }}
-    public bool Delete_{tableU}({ModelName} {tablename})
+    public {staticString} bool Delete_{tableU}({ModelName} {tablename})
     {{
-        connection.Open();
         return connection.Delete({tablename});
     }}
-    public bool Delete_{tableU}(List<{ModelName}> {tablename})
+    public {staticString} bool Delete_{tableU}(List<{ModelName}> {tablename})
     {{
-        connection.Open();
         return connection.Delete({tablename});
     }}
 }}";
@@ -352,7 +418,7 @@ public class {tableU}Core
         public DataTable GetFirstRowWithSchemaInfo(string tablename, string database)
         {
             DataTable dt = new DataTable();
-            
+
             try
             {
                 if (_model.ConnType == ConnectionTypes.MySQL)
@@ -370,7 +436,7 @@ public class {tableU}Core
                 else if (_model.ConnType == ConnectionTypes.SQL_CE || _model.ConnType == ConnectionTypes.SQL_Server)
                 {
 
-                   
+
 
                     string query = $"USE {database}; SELECT TOP 1 * FROM {tablename}; ";
                     SqlConnection sqlConnection = new SqlConnection(_model.ConnString);
