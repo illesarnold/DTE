@@ -689,7 +689,6 @@ public class {classname}
         }
         public void SettingsSerialize()
         {
-
             XmlSerializer serializer = new XmlSerializer(typeof(Settings));
             FileStream fs = new FileStream(fileName, FileMode.Create);
             serializer.Serialize(fs, Settings);
