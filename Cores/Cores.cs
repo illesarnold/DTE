@@ -91,8 +91,9 @@ namespace DTE.Cores
         {
 
             DataTable dt = GetFirstRowWithSchemaInfo(tablename, database);
+            var table_describe = GetSchemaInfo(dt.TableName,database);
 
-            return CreateModel(dt);
+            return CreateModel(dt,table_describe);
         }
         public string CreateModel(string query, Settings settings)
         {
@@ -102,7 +103,7 @@ namespace DTE.Cores
             return CreateModel(dt);
         }
 
-        private string CreateModel(DataTable dt)
+        private string CreateModel(DataTable dt,DataTable table_descibe = null)
         {
 
             var tablename = dt.TableName;
@@ -115,57 +116,73 @@ namespace DTE.Cores
             if (_settings.DataMember)
                 model += $"\t[DataContract]\r\n";
             model += $"public class {_settings.Prefix}{ColumnNameToPropName(tablename).Replace("_", "")}{_settings.Postfix}\r\n{{\r\n";
-            foreach (DataColumn item in dt.Columns)
+
+
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
+                var auto_increment = bool.Parse(dt.Rows[i]["IsAutoIncrement"].ToString());
+                var column_name = dt.Rows[i]["ColumnName"].ToString();
+                var allow_null = bool.Parse(dt.Rows[i]["AllowDBNull"].ToString());
+                var column_type = dt.Rows[i]["DataType"].ToString();
+                var isKey = bool.Parse(dt.Rows[i]["IsKey"].ToString());
 
-                ColumnInfo columnInfo = new ColumnInfo(dt, item, _model.ConnType);
+                //var field = table_descibe?.Rows[i][0].ToString();
+                //var db_type = table_descibe?.Rows[i][1].ToString();
+                //var isPrimary = table_descibe?.Rows[i][2].ToString();
+                //var default_value = table_descibe?.Rows[i][3].ToString();
+                //var extra = table_descibe?.Rows[i][4].ToString();
 
 
-                var name = columnInfo.ColumnName;
-                name = _settings.CaseSensitivity ? columnInfo.ColumnName : ColumnNameToPropName(columnInfo.ColumnName);
+                var name = column_name;
+                name = _settings.CaseSensitivity ? column_name : ColumnNameToPropName(column_name.ToString());
                 var comment = "";
                 if (_settings.Comments)
-                    comment = $"\t //  COL NAME: {columnInfo.ColumnName} \t TYPE: {columnInfo.Type} \t NULL: {columnInfo.Nullable} \t AUTO INC.: {columnInfo.Extra} \t DEF: {columnInfo.Def}";
-                if (columnInfo.Key)
                 {
-                  
+                    for (int j = 0; j < table_descibe?.Columns.Count; j++)
+                    {
+                        comment += $"  //  {table_descibe.Columns[j].ColumnName}: {table_descibe?.Rows[i][j].ToString()} ";
+                    }
+                }
+                if (isKey)
+                {
+
 
                     if (_settings.FullProp)
                     {
                         model += $@"
-    private {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} _{columnInfo.ColumnName};
+    private {GetCsharpType(column_type.ToString(), bool.Parse(allow_null.ToString()))} _{ column_name.ToString()};
                                    ";
 
-                        if (_settings.DataAnnotations && columnInfo.Extra)
+                        if (_settings.DataAnnotations && auto_increment)
                             model += $"     [{_settings.Attributes.Key}]\r\n";
 
-                        if (_settings.DataAnnotations && columnInfo.Extra == false)
+                        if (_settings.DataAnnotations && auto_increment == false)
                             model += $"     [{_settings.Attributes.ExplicitKey}]\r\n";
                         if (_settings.DataMember)
                             model += $"     [DataMember]\r\n";
-                        model += $@"    public {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} 
+                        model += $@"    public {GetCsharpType(column_type.ToString(), allow_null)} {name} 
     {{ 
         get
         {{
-            return _{columnInfo.ColumnName};
+            return _{ column_name};
         }}
         
         set
         {{
-            _{columnInfo.ColumnName} = value;
+            _{ column_name} = value;
         	OnPropertyChanged();
         }}
     }} {comment} ";
                     }
                     else
                     {
-                        if (_settings.DataAnnotations && columnInfo.Extra)
+                        if (_settings.DataAnnotations && auto_increment)
                             model += $"     [{_settings.Attributes.Key}]\r\n";
                         if (_settings.DataMember)
                             model += $"     [DataMember]\r\n";
-                        if (_settings.DataAnnotations && columnInfo.Extra == false)
+                        if (_settings.DataAnnotations && auto_increment == false)
                             model += $"     [{_settings.Attributes.ExplicitKey}]\r\n";
-                        model += $"\tpublic {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} {{ get; set; }} {comment} \r\n";
+                        model += $"\tpublic {GetCsharpType(column_type, allow_null)} {name} {{ get; set; }} {comment} \r\n";
                     }
 
 
@@ -176,22 +193,22 @@ namespace DTE.Cores
                     if (_settings.FullProp)
                     {
                         model += $@"
-    private {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} _{columnInfo.ColumnName};
+    private {GetCsharpType(column_type, allow_null)} _{ column_name};
                                    ";
 
                         if (_settings.DataMember)
                             model += $"     [DataMember]\r\n";
 
-                        model += $@"    public {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} 
+                        model += $@"    public {GetCsharpType(column_type, allow_null)} {name} 
     {{ 
         get
         {{
-            return _{columnInfo.ColumnName};
+            return _{ column_name};
         }}
         
         set
         {{
-            _{columnInfo.ColumnName} = value;
+            _{ column_name} = value;
         	OnPropertyChanged();
         }}
     }} {comment} ";
@@ -201,7 +218,7 @@ namespace DTE.Cores
                     {
                         if (_settings.DataMember)
                             model += $"     [DataMember]\r\n";
-                        model += $"\tpublic {GetCsharpType(columnInfo.Type, columnInfo.Nullable)} {name} {{ get; set; }} {comment} \r\n";
+                        model += $"\tpublic {GetCsharpType(column_type, allow_null)} {name} {{ get; set; }} {comment} \r\n";
                     }
 
                 }
@@ -283,7 +300,7 @@ namespace DTE.Cores
         }
         private string CreateCore(string database, string tablename)
         {
-            DataTable dt = GetFirstRowWithSchemaInfo(tablename, database);
+            // DataTable dt = GetFirstRowWithSchemaInfo(tablename, database);
             string tableU = FirstCharToUpper(tablename);
             string ModelName = _settings.Prefix + ColumnNameToPropName(tablename).Replace("_", "") + _settings.Postfix;
             var staticString = "";
@@ -396,11 +413,11 @@ public class {classname}
 
 
         #region Database type to c#
-        private string GetCsharpType(Type type, bool nullable)
+        private string GetCsharpType(string type, bool nullable)
         {
             string backType = "";
 
-            backType = _settings.Types.FirstOrDefault(x => x.CType == type.FullName)?.PType ?? "";
+            backType = _settings.Types.FirstOrDefault(x => x.CType == type)?.PType ?? "";
             if (nullable && _settings.Nullable == true)
             {
                 if (backType != "string" && backType != "char")
@@ -427,10 +444,9 @@ public class {classname}
 
                     MySqlConnection mySqlConnection = new MySqlConnection(_model.ConnString);
                     MySqlCommand mySqlCommand = new MySqlCommand(query, mySqlConnection);
-                    MySqlDataAdapter mySqlDataAdapter = new MySqlDataAdapter(mySqlCommand);
-                    mySqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     mySqlConnection.Open();
-                    mySqlDataAdapter.Fill(dt);
+                    MySqlDataReader mySqlDataReader = mySqlCommand.ExecuteReader(CommandBehavior.KeyInfo);
+                    dt = mySqlDataReader.GetSchemaTable();
                     mySqlConnection.Close();
                 }
                 else if (_model.ConnType == ConnectionTypes.SQL_CE || _model.ConnType == ConnectionTypes.SQL_Server)
@@ -441,10 +457,9 @@ public class {classname}
                     string query = $"USE {database}; SELECT TOP 1 * FROM {tablename}; ";
                     SqlConnection sqlConnection = new SqlConnection(_model.ConnString);
                     SqlCommand SqlCommand = new SqlCommand(query, sqlConnection);
-                    SqlDataAdapter SqlDataAdapter = new SqlDataAdapter(SqlCommand);
-                    SqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     sqlConnection.Open();
-                    SqlDataAdapter.Fill(dt);
+                    SqlDataReader SqlDataAdapter = SqlCommand.ExecuteReader(CommandBehavior.KeyInfo);
+                    dt = SqlDataAdapter.GetSchemaTable();
                     sqlConnection.Close();
                 }
                 else if (_model.ConnType == ConnectionTypes.PostgreSQL)
@@ -453,10 +468,9 @@ public class {classname}
 
                     NpgsqlConnection npgSqlConnection = new NpgsqlConnection(_model.ConnString);
                     NpgsqlCommand npgSqlCommand = new NpgsqlCommand(query, npgSqlConnection);
-                    NpgsqlDataAdapter npgSqlDataAdapter = new NpgsqlDataAdapter(npgSqlCommand);
-                    npgSqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     npgSqlConnection.Open();
-                    npgSqlDataAdapter.Fill(dt);
+                    NpgsqlDataReader SqlDataAdapter = npgSqlCommand.ExecuteReader(CommandBehavior.KeyInfo);
+                    dt = SqlDataAdapter.GetSchemaTable();
                     npgSqlConnection.Close();
                 }
             }
