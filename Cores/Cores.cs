@@ -120,7 +120,7 @@ namespace DTE.Cores
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                var auto_increment = bool.Parse(dt.Rows[i]["IsAutoIncrement"].ToString());
+                var auto_increment = bool.Parse(dt.Rows[i]["IsAutoIncrement"]?.ToString());
                 var column_name = dt.Rows[i]["ColumnName"].ToString();
                 var allow_null = bool.Parse(dt.Rows[i]["AllowDBNull"].ToString());
                 var column_type = dt.Rows[i]["DataType"].ToString();
@@ -567,30 +567,27 @@ public class {classname}
                 {
                     MySqlConnection mySqlConnection = new MySqlConnection(_model.ConnString);
                     MySqlCommand mySqlCommand = new MySqlCommand(query, mySqlConnection);
-                    MySqlDataAdapter mySqlDataAdapter = new MySqlDataAdapter(mySqlCommand);
-                    mySqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     mySqlConnection.Open();
-                    mySqlDataAdapter.Fill(dt);
+                    MySqlDataReader mySqlDataReader = mySqlCommand.ExecuteReader(CommandBehavior.KeyInfo);
+                    dt = mySqlDataReader.GetSchemaTable();
                     mySqlConnection.Close();
                 }
                 else if (_model.ConnType == ConnectionTypes.SQL_CE || _model.ConnType == ConnectionTypes.SQL_Server)
                 {
                     SqlConnection sqlConnection = new SqlConnection(_model.ConnString);
                     SqlCommand SqlCommand = new SqlCommand(query, sqlConnection);
-                    SqlDataAdapter SqlDataAdapter = new SqlDataAdapter(SqlCommand);
-                    SqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     sqlConnection.Open();
-                    SqlDataAdapter.Fill(dt);
+                    SqlDataReader SqlDataAdapter = SqlCommand.ExecuteReader(CommandBehavior.KeyInfo);
+                    dt = SqlDataAdapter.GetSchemaTable();
                     sqlConnection.Close();
                 }
                 else if (_model.ConnType == ConnectionTypes.PostgreSQL)
                 {
                     NpgsqlConnection npgSqlConnection = new NpgsqlConnection(_model.ConnString);
                     NpgsqlCommand npgSqlCommand = new NpgsqlCommand(query, npgSqlConnection);
-                    NpgsqlDataAdapter npgSqlDataAdapter = new NpgsqlDataAdapter(npgSqlCommand);
-                    npgSqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     npgSqlConnection.Open();
-                    npgSqlDataAdapter.Fill(dt);
+                    NpgsqlDataReader SqlDataAdapter = npgSqlCommand.ExecuteReader(CommandBehavior.KeyInfo);
+                    dt = SqlDataAdapter.GetSchemaTable();
                     npgSqlConnection.Close();
                 }
             }
