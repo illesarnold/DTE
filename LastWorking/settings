@@ -145,8 +145,10 @@
   <Nullable>true</Nullable>
   <Static>false</Static>
   <CaseSensitivity>false</CaseSensitivity>
-  <Prefix></Prefix>
+  <Prefix />
   <Postfix>Dto</Postfix>
   <Comments>false</Comments>
   <DataAnnotations>true</DataAnnotations>
+  <FullProp>false</FullProp>
+  <DataMember>false</DataMember>
 </Settings>

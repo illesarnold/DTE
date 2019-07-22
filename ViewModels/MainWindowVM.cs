@@ -13,6 +13,7 @@ using MahApps.Metro.Controls.Dialogs;
 using DTE.Cores;
 using DTE.Models;
 using DTE.Views.Windows;
+using System.IO;
 
 namespace DTE.ViewModels
 {
@@ -32,15 +33,15 @@ namespace DTE.ViewModels
         {
             string databaseName = null;
             if (SelectedNode is Database)
-                databaseName =  (SelectedNode as Database).DatabaseName;
+                databaseName = (SelectedNode as Database).DatabaseName;
             else if (SelectedNode is Table)
                 databaseName = (SelectedNode as Table).DataBaseName;
 
             var tree = (SelectedNode as ITreeViewModel)?.ParentTreeBase;
 
-         
 
-            var sToEntWin = new QueryToEntityWindow(tree,databaseName);
+
+            var sToEntWin = new QueryToEntityWindow(tree, databaseName);
             var res = sToEntWin.ShowDialog();
             if (res != null && res == true)
             {
@@ -84,6 +85,89 @@ namespace DTE.ViewModels
         }
 
 
+        public RelayCommand CreateIntoFilesCommand
+        {
+            get
+            {
+                return new RelayCommand(_ => CreateIntoFilesAsync());
+            }
+        }
+
+        private async void CreateIntoFilesAsync()
+        {
+            try
+            {
+                using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        Load = true;
+                        string base_code = @"using Dapper.Contrib.Extensions;
+using System;
+using System.Collections.Generic;
+namespace RenameThisNamespace
+{
+[code]
+}
+";
+                        var connect = GetConnectionByNode();
+
+                        if (connect == null)
+                        {
+                            Load = false;
+                            return;
+                        }
+
+                        Globals.cc = new ConnectionCore(connect.Connection);
+                        Settings.SettingsDeserialize();
+                        var _settings = Settings.Settings;
+                        bool tableSelected = CheckSelection(connect);
+
+                        if (tableSelected)
+                        {
+                            foreach (var database in connect.Databases)
+                            {
+                                if (database == null || database.Tables == null || database.Tables.Count == 0)
+                                    continue;
+
+                                var tables = database.Tables.Where(x => x.Checked);
+
+                                if (tables == null)
+                                    continue;
+
+                                foreach (var table in tables)
+                                {
+                                    var model_code = Globals.cc.CreateModel(database.DatabaseName, table.TableName,_settings);
+                                    var modelname = $@"{ _settings.Prefix}{Cores.ConnectionCore.ColumnNameToPropName(table.TableName).Replace("_", "")}{ _settings.Postfix}";
+
+                                    string cs_file_code = base_code.Replace("[code]", model_code);
+
+                                    File.WriteAllText(dialog.SelectedPath+"/"+modelname+".cs", cs_file_code);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (SelectedNode is Table)
+                            {
+                                var table = SelectedNode as Table;
+                                string model_code = await Task.Run(() => Globals.cc.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
+                                string cs_file_code = base_code.Replace("[code]",model_code);
+                                var modelname = $@"{ _settings.Prefix}{Cores.ConnectionCore.ColumnNameToPropName(table.TableName).Replace("_", "")}{ _settings.Postfix}";
+                                File.WriteAllText(dialog.SelectedPath + "/" + modelname + ".cs", cs_file_code);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            Load = false;
+        }
+
         public RelayCommand ModelCommand
         {
             get
@@ -116,7 +200,7 @@ namespace DTE.ViewModels
                 Task<string> task = Task.Run(() => Globals.cc.CreateModels(connect.Databases.ToList(), Settings.Settings));
 
                 Document.Text = await task;
-               
+
 
             }
             else
@@ -129,7 +213,7 @@ namespace DTE.ViewModels
                 }
 
             }
-           
+
 
             Load = false;
 
@@ -215,7 +299,7 @@ namespace DTE.ViewModels
             return false;
         }
 
-       
+
         public RelayCommand DeleteConnection
         {
             get
@@ -327,7 +411,7 @@ namespace DTE.ViewModels
                     XMLCore.ConnectionDeserialize();
                 }
             }
-            
+
         }
         public async void LoadFirstConnAsync()
         {
@@ -393,7 +477,7 @@ namespace DTE.ViewModels
                 Globals.cc = new ConnectionCore(connect.Connection);
                 Settings.SettingsDeserialize();
 
-                Task<DataTable> schemaTask = Task.Run(() => Globals.cc.GetSchemaInfo(table.TableName,table.DataBaseName));
+                Task<DataTable> schemaTask = Task.Run(() => Globals.cc.GetSchemaInfo(table.TableName, table.DataBaseName));
 
                 SchemaInfo = await schemaTask;
 
@@ -594,9 +678,9 @@ namespace DTE.ViewModels
             }
         }
 
-      
 
-      
+
+
 
     }
 

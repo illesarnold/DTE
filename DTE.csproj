@@ -88,6 +88,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -223,18 +224,15 @@
     <Content Include="DLLS\System.Threading.Tasks.Extensions.dll" />
     <Content Include="DLLS\System.ValueTuple.dll" />
     <Content Include="DLLS\System.Windows.Interactivity.dll" />
-    <Content Include="LastWorking\AurelienRibon.Ui.SyntaxHighlightBox.dll" />
     <Content Include="LastWorking\ControlzEx.dll" />
     <Content Include="LastWorking\Dapper.Contrib.dll" />
     <Content Include="LastWorking\Dapper.dll" />
     <Content Include="LastWorking\Dragablz.dll" />
     <Content Include="LastWorking\DTE.exe" />
-    <Content Include="LastWorking\GlobalExPro.dll" />
     <Content Include="LastWorking\Google.Protobuf.dll" />
     <Content Include="LastWorking\ICSharpCode.AvalonEdit.dll" />
     <Content Include="LastWorking\MahApps.Metro.dll" />
     <Content Include="LastWorking\MahApps.Metro.IconPacks.dll" />
-    <Content Include="LastWorking\ModelGen.exe" />
     <Content Include="LastWorking\MySql.Data.dll" />
     <Content Include="LastWorking\Npgsql.dll" />
     <Content Include="LastWorking\System.Runtime.CompilerServices.Unsafe.dll" />
