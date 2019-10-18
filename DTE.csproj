@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>dte.ico</ApplicationIcon>
+    <ApplicationIcon>dte-logo-v1.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
@@ -112,13 +112,25 @@
     </ApplicationDefinition>
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
-    <Compile Include="Cores\Cores.cs" />
+    <Compile Include="Cores\ConnectionCore.cs" />
+    <Compile Include="Cores\ModelCore.cs" />
+    <Compile Include="Cores\SettingsCore.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="Models\Attributes.cs" />
+    <Compile Include="Models\ColumnInfo.cs" />
+    <Compile Include="Models\ConnectionModel.cs" />
+    <Compile Include="Models\ConnectionType.cs" />
+    <Compile Include="Models\Database.cs" />
     <Compile Include="Models\DataBindingBase.cs" />
-    <Compile Include="Models\Models.cs" />
+    <Compile Include="Models\Interfaces\ITreeViewModel.cs" />
     <Compile Include="Models\RelayCommand.cs" />
+    <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\Table.cs" />
+    <Compile Include="Models\TreeViewModel.cs" />
+    <Compile Include="Models\TypeConverter.cs" />
     <Compile Include="ViewModels\ConnectionManagerVM.cs" />
     <Compile Include="ViewModels\DataAnnotationsVM.cs" />
+    <Compile Include="ViewModels\TemplateVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="ViewModels\QueryToEntityVM.cs" />
     <Compile Include="ViewModels\ThemeManager.cs" />
@@ -128,6 +140,9 @@
     </Compile>
     <Compile Include="Views\Windows\DataAnnotationsWindow.xaml.cs">
       <DependentUpon>DataAnnotationsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\TemplateWindow.xaml.cs">
+      <DependentUpon>TemplateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\QueryToEntityWindow.xaml.cs">
       <DependentUpon>QueryToEntityWindow.xaml</DependentUpon>
@@ -171,6 +186,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Windows\TemplateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Windows\QueryToEntityWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -198,9 +217,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="dte-logo-v1.ico" />
     <Content Include="settings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="LastWorking\settings" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

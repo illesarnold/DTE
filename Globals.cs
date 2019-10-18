@@ -8,7 +8,7 @@ namespace DTE
 {
     public class Globals
     {
-        public static Cores.ConnectionCore cc;
+        public static Cores.ModelCore ModelCore;
 
         public static List<Models.ConnectionType> ConnTypes = new List<Models.ConnectionType>()
         {

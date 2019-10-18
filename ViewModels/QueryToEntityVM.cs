@@ -44,13 +44,13 @@ namespace DTE.ViewModels
         {
             Window win = window as Window;
             string entity = "";
-            ConnectionCore cc = null;
+            ModelCore _modelCore = null;
             try
             {
                 SettingsCore settings = new SettingsCore();
                 settings.SettingsSerialize();
-                cc = new Cores.ConnectionCore(new ConnectionModel(Type,ConnString));
-                entity = cc.CreateModel(Document.Text,settings.Settings);
+                _modelCore = new Cores.ModelCore(new ConnectionModel(Type,ConnString));
+                entity = _modelCore.CreateModel(Document.Text,settings.Settings);
             }
             catch (Exception ex)
             {
@@ -58,9 +58,9 @@ namespace DTE.ViewModels
                 return;
             }
 
-            if(cc != null && cc.Errors.Count > 0)
+            if(_modelCore != null && _modelCore.Errors.Count > 0)
             {
-                await _dialogCoordinator.ShowMessageAsync(this, $"Error!", $"Error message: {cc.Errors.First().Message}  /r/nStackTrace: {cc.Errors.First().StackTrace}");
+                await _dialogCoordinator.ShowMessageAsync(this, $"Error!", $"Error message: {_modelCore.Errors.First().Message}  /r/nStackTrace: {_modelCore.Errors.First().StackTrace}");
             }
             else
             {

@@ -1,30 +1,24 @@
-﻿using System;
+﻿using Dapper;
+using DTE.Models;
+using MySql.Data.MySqlClient;
+using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
-using DTE.Models;
-using MySql.Data.MySqlClient;
-using Dapper.Contrib;
-using Dapper;
-using System.Collections.ObjectModel;
-using Npgsql;
 
 namespace DTE.Cores
 {
-
-    public class ConnectionCore
+    public class ModelCore
     {
         IDbConnection connection;
         ConnectionModel _model;
         Settings _settings;
         public List<Exception> Errors = new List<Exception>();
-        public ConnectionCore(ConnectionModel model)
+        public ModelCore(ConnectionModel model)
         {
             _model = model;
             SetConnection();
@@ -91,9 +85,9 @@ namespace DTE.Cores
         {
 
             DataTable dt = GetFirstRowWithSchemaInfo(tablename, database);
-            var table_describe = GetSchemaInfo(dt.TableName,database);
+            var table_describe = GetSchemaInfo(dt.TableName, database);
 
-            return CreateModel(dt,table_describe);
+            return CreateModel(dt, table_describe);
         }
         public string CreateModel(string query, Settings settings)
         {
@@ -103,7 +97,7 @@ namespace DTE.Cores
             return CreateModel(dt);
         }
 
-        private string CreateModel(DataTable dt,DataTable table_descibe = null)
+        private string CreateModel(DataTable dt, DataTable table_descibe = null)
         {
 
             var tablename = dt.TableName;
@@ -126,16 +120,14 @@ namespace DTE.Cores
                 var column_type = dt.Rows[i]["DataType"].ToString();
                 var isKey = bool.Parse(dt.Rows[i]["IsKey"].ToString());
 
-                //var field = table_descibe?.Rows[i][0].ToString();
-                //var db_type = table_descibe?.Rows[i][1].ToString();
-                //var isPrimary = table_descibe?.Rows[i][2].ToString();
-                //var default_value = table_descibe?.Rows[i][3].ToString();
-                //var extra = table_descibe?.Rows[i][4].ToString();
-
-
                 var name = column_name;
                 name = _settings.CaseSensitivity ? column_name : ColumnNameToPropName(column_name.ToString());
+                var cType = GetCsharpType(column_type, allow_null);
                 var comment = "";
+                var annotations = "";
+
+
+
                 if (_settings.Comments)
                 {
                     for (int j = 0; j < table_descibe?.Columns.Count; j++)
@@ -143,85 +135,27 @@ namespace DTE.Cores
                         comment += $"  //  {table_descibe.Columns[j].ColumnName}: {table_descibe?.Rows[i][j].ToString()} ";
                     }
                 }
+
                 if (isKey)
                 {
+                    if (_settings.DataAnnotations && auto_increment)
+                        annotations += $"    [{_settings.Attributes.Key}]";
+                    if (_settings.DataAnnotations && auto_increment == false)
+                        annotations += $"    [{_settings.Attributes.ExplicitKey}]";
+                }
+                if (_settings.DataMember)
+                    annotations += $"\r\n     [DataMember]";
 
-
-                    if (_settings.FullProp)
-                    {
-                        model += $@"
-    private {GetCsharpType(column_type.ToString(), bool.Parse(allow_null.ToString()))} _{ column_name.ToString()};
-                                   ";
-
-                        if (_settings.DataAnnotations && auto_increment)
-                            model += $"     [{_settings.Attributes.Key}]\r\n";
-
-                        if (_settings.DataAnnotations && auto_increment == false)
-                            model += $"     [{_settings.Attributes.ExplicitKey}]\r\n";
-                        if (_settings.DataMember)
-                            model += $"     [DataMember]\r\n";
-                        model += $@"    public {GetCsharpType(column_type.ToString(), allow_null)} {name} 
-    {{ 
-        get
-        {{
-            return _{ column_name};
-        }}
-        
-        set
-        {{
-            _{ column_name} = value;
-        	OnPropertyChanged();
-        }}
-    }} {comment} ";
-                    }
-                    else
-                    {
-                        if (_settings.DataAnnotations && auto_increment)
-                            model += $"     [{_settings.Attributes.Key}]\r\n";
-                        if (_settings.DataMember)
-                            model += $"     [DataMember]\r\n";
-                        if (_settings.DataAnnotations && auto_increment == false)
-                            model += $"     [{_settings.Attributes.ExplicitKey}]\r\n";
-                        model += $"\tpublic {GetCsharpType(column_type, allow_null)} {name} {{ get; set; }} {comment} \r\n";
-                    }
-
+                if (_settings.FullProp)
+                {
+                    model = FullPropText(model, column_name, name, comment, cType,annotations);
 
                 }
                 else
                 {
-
-                    if (_settings.FullProp)
-                    {
-                        model += $@"
-    private {GetCsharpType(column_type, allow_null)} _{ column_name};
-                                   ";
-
-                        if (_settings.DataMember)
-                            model += $"     [DataMember]\r\n";
-
-                        model += $@"    public {GetCsharpType(column_type, allow_null)} {name} 
-    {{ 
-        get
-        {{
-            return _{ column_name};
-        }}
-        
-        set
-        {{
-            _{ column_name} = value;
-        	OnPropertyChanged();
-        }}
-    }} {comment} ";
-
-                    }
-                    else
-                    {
-                        if (_settings.DataMember)
-                            model += $"     [DataMember]\r\n";
-                        model += $"\tpublic {GetCsharpType(column_type, allow_null)} {name} {{ get; set; }} {comment} \r\n";
-                    }
-
+                    model = PropText(model, column_name, name, comment, cType,annotations);
                 }
+
 
 
             }
@@ -229,41 +163,28 @@ namespace DTE.Cores
 
         }
 
-
-        public class ColumnInfo
+        private string PropText(string model, string column_name, string name, string comment, string cType, string annotations)
         {
-            public ColumnInfo()
-            {
-
-            }
-
-
-            public ColumnInfo(DataTable dt, DataColumn column, ConnectionTypes connectionType)
-            {
-                Get_ColumnInfo(dt, column, connectionType);
-            }
-            public bool Key { get; set; }
-            public string ColumnName { get; set; }
-            public Type Type { get; set; }
-            public bool Nullable { get; set; }
-            public bool Extra { get; set; }
-            public string Def { get; set; }
-
-
-
-            private void Get_ColumnInfo(DataTable dt, DataColumn column, ConnectionTypes connectionType)
-            {
-                this.ColumnName = column.ColumnName;
-                this.Type = column.DataType;
-                this.Nullable = column.AllowDBNull;
-                this.Extra = column.AutoIncrement;
-                this.Def = column.DefaultValue.ToString();
-                this.Key = dt.PrimaryKey.Select(x => x.ColumnName).ToList().Contains(column.ColumnName);
-            }
-
-
-
+            model += _settings.PropTemplate?.Replace("[Type]", cType)
+                                        ?.Replace("[PrivateName]", column_name)
+                                        ?.Replace("[PublicName]", name)
+                                        ?.Replace("[Comment]", comment)
+                                        ?.Replace("[Annotations]", annotations);
+            return model;
         }
+
+        private string FullPropText(string model, string column_name, string name, string comment, string cType, string annotations)
+        {
+            model += _settings.FullPropTemplate?.Replace("[Type]", cType)
+                                          ?.Replace("[PrivateName]", column_name)
+                                          ?.Replace("[PublicName]", name)
+                                          ?.Replace("[Comment]", comment)
+                                          ?.Replace("[Annotations]", annotations);
+            return model;
+        }
+
+
+
 
         // ------------------------------ Core Create ------------------------------ //
 
@@ -313,56 +234,56 @@ namespace DTE.Cores
             else
             {
                 constructor = $@"
-    private IDbConnection connection;
-    public {classname}(IDbConnection _connection)
-    {{
-            this.connection = _connection;
-    }}";
+	private IDbConnection connection;
+	public {classname}(IDbConnection _connection)
+	{{
+			this.connection = _connection;
+	}}";
             }
 
             string result = $@"
 public class {classname}
 {{
-    // USE Dapper and Dapper Contrib nugate
-                                    
-    {constructor}
-    
-    /// <summary>
-    /// Get a single entity by ID.
-    /// </summary>
-    /// <returns>Entity</returns>
-    public {staticString} {ModelName} Get_{tableU}(uint id)
-    {{
-        return connection.Get<{ModelName}>(id);
-    }}
-    public {staticString} List<{ModelName}> GetAll_{tableU}()
-    {{
-        return connection.GetAll<{ModelName}>().ToList();
-    }}
-    public {staticString} long Insert_{tableU}({ModelName} {tablename})
-    {{
-        return connection.Insert({tablename});
-    }}
-    public {staticString} long Insert_{tableU}(List<{ModelName}> {tablename})
-    {{
-        return connection.Insert({tablename});
-    }}
-    public {staticString} bool Update_{tableU}({ModelName} {tablename})
-    {{
-        return connection.Update({tablename});
-    }}
-    public {staticString} bool Update_{tableU}(List<{ModelName}> {tablename})
-    {{
-        return connection.Update({tablename});
-    }}
-    public {staticString} bool Delete_{tableU}({ModelName} {tablename})
-    {{
-        return connection.Delete({tablename});
-    }}
-    public {staticString} bool Delete_{tableU}(List<{ModelName}> {tablename})
-    {{
-        return connection.Delete({tablename});
-    }}
+	// USE Dapper and Dapper Contrib nugate
+									
+	{constructor}
+	
+	/// <summary>
+	/// Get a single entity by ID.
+	/// </summary>
+	/// <returns>Entity</returns>
+	public {staticString} {ModelName} Get_{tableU}(uint id)
+	{{
+		return connection.Get<{ModelName}>(id);
+	}}
+	public {staticString} List<{ModelName}> GetAll_{tableU}()
+	{{
+		return connection.GetAll<{ModelName}>().ToList();
+	}}
+	public {staticString} long Insert_{tableU}({ModelName} {tablename})
+	{{
+		return connection.Insert({tablename});
+	}}
+	public {staticString} long Insert_{tableU}(List<{ModelName}> {tablename})
+	{{
+		return connection.Insert({tablename});
+	}}
+	public {staticString} bool Update_{tableU}({ModelName} {tablename})
+	{{
+		return connection.Update({tablename});
+	}}
+	public {staticString} bool Update_{tableU}(List<{ModelName}> {tablename})
+	{{
+		return connection.Update({tablename});
+	}}
+	public {staticString} bool Delete_{tableU}({ModelName} {tablename})
+	{{
+		return connection.Delete({tablename});
+	}}
+	public {staticString} bool Delete_{tableU}(List<{ModelName}> {tablename})
+	{{
+		return connection.Delete({tablename});
+	}}
 }}";
             return result;
         }
@@ -451,9 +372,6 @@ public class {classname}
                 }
                 else if (_model.ConnType == ConnectionTypes.SQL_CE || _model.ConnType == ConnectionTypes.SQL_Server)
                 {
-
-
-
                     string query = $"USE {database}; SELECT TOP 1 * FROM {tablename}; ";
                     SqlConnection sqlConnection = new SqlConnection(_model.ConnString);
                     SqlCommand SqlCommand = new SqlCommand(query, sqlConnection);
@@ -517,29 +435,29 @@ public class {classname}
                 else if (_model.ConnType == ConnectionTypes.PostgreSQL)
                 {
                     string query = $@"SELECT
-	                                    a.attname AS Field,
-	                                    t.typname || '(' || a.atttypmod || ')' AS Type,
-	                                    CASE WHEN a.attnotnull = 't' THEN 'YES' ELSE 'NO' END AS Null,
-	                                    CASE WHEN r.contype = 'p' THEN 'PRI' ELSE '' END AS Key,
-	                                    (SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid), '\'(.*)\'')
-		                                    FROM
-			                                    pg_catalog.pg_attrdef d
-		                                    WHERE
-			                                    d.adrelid = a.attrelid
-			                                    AND d.adnum = a.attnum
-			                                    AND a.atthasdef) AS Default,
-	                                    '' as Extras
-                                    FROM
-	                                    pg_class c 
-	                                    JOIN pg_attribute a ON a.attrelid = c.oid
-	                                    JOIN pg_type t ON a.atttypid = t.oid
-	                                    LEFT JOIN pg_catalog.pg_constraint r ON c.oid = r.conrelid 
-		                                    AND r.conname = a.attname
-                                    WHERE
-	                                    c.relname = '{tablename}'
-	                                    AND a.attnum > 0
+										a.attname AS Field,
+										t.typname || '(' || a.atttypmod || ')' AS Type,
+										CASE WHEN a.attnotnull = 't' THEN 'YES' ELSE 'NO' END AS Null,
+										CASE WHEN r.contype = 'p' THEN 'PRI' ELSE '' END AS Key,
+										(SELECT substring(pg_catalog.pg_get_expr(d.adbin, d.adrelid), '\'(.*)\'')
+											FROM
+												pg_catalog.pg_attrdef d
+											WHERE
+												d.adrelid = a.attrelid
+												AND d.adnum = a.attnum
+												AND a.atthasdef) AS Default,
+										'' as Extras
+									FROM
+										pg_class c 
+										JOIN pg_attribute a ON a.attrelid = c.oid
+										JOIN pg_type t ON a.atttypid = t.oid
+										LEFT JOIN pg_catalog.pg_constraint r ON c.oid = r.conrelid 
+											AND r.conname = a.attname
+									WHERE
+										c.relname = '{tablename}'
+										AND a.attnum > 0
 	
-                                    ORDER BY a.attnum ";
+									ORDER BY a.attnum ";
 
                     NpgsqlConnection npgSqlConnection = new NpgsqlConnection(_model.ConnString);
                     NpgsqlCommand npgSqlCommand = new NpgsqlCommand(query, npgSqlConnection);
@@ -665,91 +583,4 @@ public class {classname}
         }
 
     }
-    public class SettingsCore : DataBindingBase45
-    {
-        private string fileName = "settings";
-        public SettingsCore()
-        {
-            SettingsDeserialize();
-        }
-        Settings _settings = new Settings();
-        public Settings Settings
-        {
-            get
-            {
-                return _settings;
-            }
-
-            set
-            {
-                _settings = value;
-                OnPropertyChanged();
-            }
-        }
-        public void SettingsDeserialize()
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-
-            if (File.Exists(fileName))
-            {
-                StreamReader reader = new StreamReader(fileName);
-                Settings = (Settings)serializer.Deserialize(reader);
-                reader.Close();
-            }
-
-        }
-        public void SettingsSerialize()
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-            FileStream fs = new FileStream(fileName, FileMode.Create);
-            serializer.Serialize(fs, Settings);
-            fs.Close();
-        }
-    }
-    public class ConnectionXMLCore : DataBindingBase45
-    {
-        private string fileName = "connections";
-        public ConnectionXMLCore()
-        {
-            ConnectionDeserialize();
-        }
-
-        public void ConnectionDeserialize()
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<TreeViewModel>));
-
-            if (File.Exists(fileName))
-            {
-                StreamReader reader = new StreamReader(fileName);
-                Connections = (ObservableCollection<TreeViewModel>)serializer.Deserialize(reader);
-                reader.Close();
-            }
-
-        }
-        public void ConnectionSerialize()
-        {
-
-            XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<TreeViewModel>));
-            FileStream fs = new FileStream(fileName, FileMode.Create);
-            serializer.Serialize(fs, Connections);
-            fs.Close();
-        }
-
-        ObservableCollection<Models.TreeViewModel> _connections = new ObservableCollection<TreeViewModel>();
-        public ObservableCollection<Models.TreeViewModel> Connections
-        {
-            get
-            {
-                return _connections;
-            }
-
-            set
-            {
-                _connections = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-
 }

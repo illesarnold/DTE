@@ -14,6 +14,8 @@ using DTE.Cores;
 using DTE.Models;
 using DTE.Views.Windows;
 using System.IO;
+using System.Text.RegularExpressions;
+using DTE.Models.Interfaces;
 
 namespace DTE.ViewModels
 {
@@ -49,28 +51,56 @@ namespace DTE.ViewModels
             }
         }
 
-        public RelayCommand DataAnnotationsSettings
+        public RelayCommand DataAnnotationsSettingsCommand
         {
             get
             {
-                return new RelayCommand(_ => DataAnnotationsSettingsAsync());
+                return new RelayCommand(_ => DataAnnotationsSettings());
             }
         }
-
-        private void DataAnnotationsSettingsAsync()
+        public RelayCommand TemplateSettingsCommand
+        {
+            get
+            {
+                return new RelayCommand(p => TemplateSettings((string)p));
+            }
+        }
+        private void TemplateSettings(string type)
+        {
+            Views.Windows.TemplateWindow templateWindow = null;
+            switch (type)
+            {
+                case "p":
+                    templateWindow = new Views.Windows.TemplateWindow(TemplateType.Property);
+                    templateWindow.Show();
+                    break;
+                case "fp":
+                     templateWindow = new Views.Windows.TemplateWindow(TemplateType.FullProperty);
+                    templateWindow.Show();
+                    break;
+                case "c":
+                     templateWindow = new Views.Windows.TemplateWindow(TemplateType.Class);
+                    templateWindow.Show();
+                    break;
+                default:
+                    break;
+            }
+           
+        }
+        private void DataAnnotationsSettings()
         {
             Views.Windows.DataAnnotationsWindow annotationsWindow = new Views.Windows.DataAnnotationsWindow();
             annotationsWindow.Show();
         }
-        public RelayCommand TypeConversionSettings
+        public RelayCommand TypeConversionSettingsCommand
         {
             get
             {
-                return new RelayCommand(_ => TypeConversionSettingsAsync());
+                return new RelayCommand(_ => TypeConversionSettings());
             }
         }
 
-        private void TypeConversionSettingsAsync()
+        private void TypeConversionSettings()
         {
             Views.Windows.TypeConversion Window = new Views.Windows.TypeConversion();
             Window.Show();
@@ -119,7 +149,7 @@ namespace RenameThisNamespace
                             return;
                         }
 
-                        Globals.cc = new ConnectionCore(connect.Connection);
+                        Globals.ModelCore = new ModelCore(connect.Connection);
                         Settings.SettingsDeserialize();
                         var _settings = Settings.Settings;
                         bool tableSelected = CheckSelection(connect);
@@ -138,9 +168,9 @@ namespace RenameThisNamespace
 
                                 foreach (var table in tables)
                                 {
-                                    var model_code = Globals.cc.CreateModel(database.DatabaseName, table.TableName,_settings);
-                                    var modelname = $@"{ _settings.Prefix}{Cores.ConnectionCore.ColumnNameToPropName(table.TableName).Replace("_", "")}{ _settings.Postfix}";
-
+                                    var model_code = Globals.ModelCore.CreateModel(database.DatabaseName, table.TableName,_settings);
+                                    var modelname = $@"{ _settings.Prefix}{Cores.ModelCore.ColumnNameToPropName(table.TableName).Replace("_", "")}{ _settings.Postfix}";
+                                    modelname = Regex.Replace(modelname, "[^a-zA-Z0-9_.]+", "");
                                     string cs_file_code = base_code.Replace("[code]", model_code);
 
                                     File.WriteAllText(dialog.SelectedPath+"/"+modelname+".cs", cs_file_code);
@@ -152,9 +182,9 @@ namespace RenameThisNamespace
                             if (SelectedNode is Table)
                             {
                                 var table = SelectedNode as Table;
-                                string model_code = await Task.Run(() => Globals.cc.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
+                                string model_code = await Task.Run(() => Globals.ModelCore.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
                                 string cs_file_code = base_code.Replace("[code]",model_code);
-                                var modelname = $@"{ _settings.Prefix}{Cores.ConnectionCore.ColumnNameToPropName(table.TableName).Replace("_", "")}{ _settings.Postfix}";
+                                var modelname = $@"{ _settings.Prefix}{Cores.ModelCore.ColumnNameToPropName(table.TableName).Replace("_", "")}{ _settings.Postfix}";
                                 File.WriteAllText(dialog.SelectedPath + "/" + modelname + ".cs", cs_file_code);
                             }
                         }
@@ -190,14 +220,14 @@ namespace RenameThisNamespace
 
 
 
-            Globals.cc = new ConnectionCore(connect.Connection);
+            Globals.ModelCore = new ModelCore(connect.Connection);
             Settings.SettingsDeserialize();
 
             bool tableSelected = CheckSelection(connect);
 
             if (tableSelected)
             {
-                Task<string> task = Task.Run(() => Globals.cc.CreateModels(connect.Databases.ToList(), Settings.Settings));
+                Task<string> task = Task.Run(() => Globals.ModelCore.CreateModels(connect.Databases.ToList(), Settings.Settings));
 
                 Document.Text = await task;
 
@@ -208,7 +238,7 @@ namespace RenameThisNamespace
                 if (SelectedNode is Table)
                 {
                     var table = SelectedNode as Table;
-                    Task<string> task = Task.Run(() => Globals.cc.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
+                    Task<string> task = Task.Run(() => Globals.ModelCore.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
                     Document.Text = await task;
                 }
 
@@ -242,14 +272,14 @@ namespace RenameThisNamespace
 
 
 
-            Globals.cc = new ConnectionCore(connect.Connection);
+            Globals.ModelCore = new ModelCore(connect.Connection);
             Settings.SettingsDeserialize();
 
             bool tableSelected = CheckSelection(connect);
 
             if (tableSelected)
             {
-                Task<string> task = Task.Run(() => Globals.cc.CreateCores(connect.Databases.ToList(), Settings.Settings));
+                Task<string> task = Task.Run(() => Globals.ModelCore.CreateCores(connect.Databases.ToList(), Settings.Settings));
                 Document.Text = await task;
 
             }
@@ -258,7 +288,7 @@ namespace RenameThisNamespace
                 if (SelectedNode is Table)
                 {
                     var table = SelectedNode as Table;
-                    Task<string> task = Task.Run(() => Globals.cc.CreateCore(table.DataBaseName, table.TableName, Settings.Settings));
+                    Task<string> task = Task.Run(() => Globals.ModelCore.CreateCore(table.DataBaseName, table.TableName, Settings.Settings));
                     Document.Text = await task;
                 }
 
@@ -474,10 +504,10 @@ namespace RenameThisNamespace
 
 
 
-                Globals.cc = new ConnectionCore(connect.Connection);
+                Globals.ModelCore = new ModelCore(connect.Connection);
                 Settings.SettingsDeserialize();
 
-                Task<DataTable> schemaTask = Task.Run(() => Globals.cc.GetSchemaInfo(table.TableName, table.DataBaseName));
+                Task<DataTable> schemaTask = Task.Run(() => Globals.ModelCore.GetSchemaInfo(table.TableName, table.DataBaseName));
 
                 SchemaInfo = await schemaTask;
 
@@ -485,7 +515,7 @@ namespace RenameThisNamespace
 
                 Load = true;
 
-                Task<string> modelTask = Task.Run(() => Globals.cc.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
+                Task<string> modelTask = Task.Run(() => Globals.ModelCore.CreateModel(table.DataBaseName, table.TableName, Settings.Settings));
 
                 Document.Text = await modelTask;
 
@@ -493,9 +523,9 @@ namespace RenameThisNamespace
             }
         }
 
-        Cores.ConnectionXMLCore _xMLCore = new Cores.ConnectionXMLCore();
+        Cores.ConnectionCore _xMLCore = new Cores.ConnectionCore();
 
-        public Cores.ConnectionXMLCore XMLCore
+        public Cores.ConnectionCore XMLCore
         {
             get
             {

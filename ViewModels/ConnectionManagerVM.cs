@@ -85,7 +85,7 @@ namespace DTE.ViewModels
         {
             try
             {
-                ConnectionXMLCore xMLCore = new ConnectionXMLCore();
+                ConnectionCore xMLCore = new ConnectionCore();
                 if (EditModel != null)
                 {
                     EditModel = xMLCore.Connections.FirstOrDefault(x => x.Connection.ConnectionName == EditModel.ConnectionName)?.Connection;

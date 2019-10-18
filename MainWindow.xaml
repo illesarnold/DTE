@@ -1,82 +1,96 @@
 ﻿<mahapp:MetroWindow
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:local="clr-namespace:DTE"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:ViewModels="clr-namespace:DTE.ViewModels" x:Class="DTE.MainWindow"
-        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-        xmlns:converter="clr-namespace:DTE.Converters"
-    xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
-    xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
+    x:Class="DTE.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+    xmlns:ViewModels="clr-namespace:DTE.ViewModels"
     xmlns:avalon="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:converter="clr-namespace:DTE.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
+    xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:DTE"
+    xmlns:mahapp="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="DTE"
+    Width="1200"
+    Height="700"
     Dialog:DialogParticipation.Register="{Binding}"
-        WindowStartupLocation="CenterScreen"
-        mc:Ignorable="d"
-                     BorderBrush="{DynamicResource AccentColorBrush}"
-                      BorderThickness="1"
-        Title="DTE" Height="700" Width="1200">
+    BorderBrush="{DynamicResource AccentColorBrush}"
+    BorderThickness="1"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
     <mahapp:MetroWindow.DataContext>
-        <ViewModels:MainWindowVM/>
+        <ViewModels:MainWindowVM />
     </mahapp:MetroWindow.DataContext>
     <mahapp:MetroWindow.Resources>
         <converter:VisibilityConverter x:Key="VisToBoolean" />
     </mahapp:MetroWindow.Resources>
     <mahapp:MetroWindow.Flyouts>
         <mahapp:FlyoutsControl>
-            <mahapp:Flyout IsPinned="False"  IsOpen="{Binding FlyOutOpen}" Header="Settings" Position="Right" Width="300"  >
+            <mahapp:Flyout
+                Width="300"
+                Header="Settings"
+                IsOpen="{Binding FlyOutOpen}"
+                IsPinned="False"
+                Position="Right">
                 <StackPanel Margin="5">
                     <mahapp:ToggleSwitch
-                                   Header="Nullable"
-                                   IsChecked="{Binding Settings.Settings.Nullable}"
-                                   Margin="5"
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                        Margin="5"
+                        Header="Nullable"
+                        IsChecked="{Binding Settings.Settings.Nullable}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:ToggleSwitch
-                                   Header="Static"
-                                   IsChecked="{Binding Settings.Settings.Static}"
-                                   Margin="5"
-                                   
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                        Margin="5"
+                        Header="Static"
+                        IsChecked="{Binding Settings.Settings.Static}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:ToggleSwitch
-                                   Header="CaseSensitive"
-                                   IsChecked="{Binding Settings.Settings.CaseSensitivity}"
-                                   Margin="5"
-                                   
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                        Margin="5"
+                        Header="CaseSensitive"
+                        IsChecked="{Binding Settings.Settings.CaseSensitivity}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:ToggleSwitch
-                                   Header="Comments"
-                                   IsChecked="{Binding Settings.Settings.Comments}"
-                                   Margin="5"
-                                   
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                        Margin="5"
+                        Header="Comments"
+                        IsChecked="{Binding Settings.Settings.Comments}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:ToggleSwitch
-                                   Header="FullProp"
-                                   IsChecked="{Binding Settings.Settings.FullProp}"
-                                   Margin="5"
-                                   
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                        Margin="5"
+                        Header="FullProp"
+                        IsChecked="{Binding Settings.Settings.FullProp}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:ToggleSwitch
-                                   Header="DataAnnotations"
-                                   IsChecked="{Binding Settings.Settings.DataAnnotations}"
-                                   Margin="5"
-                                   
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                        Margin="5"
+                        Header="DataAnnotations"
+                        IsChecked="{Binding Settings.Settings.DataAnnotations}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
                     <mahapp:ToggleSwitch
-                                   Header="DataMember"
-                                   IsChecked="{Binding Settings.Settings.DataMember}"
-                                   Margin="5"
-                                   
-                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
-                    <mahapp:MetroHeader Margin="5" Header="Prefix"/>
-                    <TextBox Margin="5"  HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.Prefix, UpdateSourceTrigger=PropertyChanged}" />
-                    <mahapp:MetroHeader Margin="5" Header="Postfix"/>
-                    <TextBox Margin="5"   HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.Postfix, UpdateSourceTrigger=PropertyChanged}"/>
-                    <mahapp:MetroHeader Margin="5" Header="CRUD prefix"/>
-                    <TextBox Margin="5"   HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.CRUD_prefix, UpdateSourceTrigger=PropertyChanged}"/>
-                    <mahapp:MetroHeader Margin="5" Header="CRUD postfix"/>
-                    <TextBox Margin="5"   HorizontalContentAlignment="Stretch" Text="{Binding Settings.Settings.CRUD_postfix, UpdateSourceTrigger=PropertyChanged}"/>
+                        Margin="5"
+                        Header="DataMember"
+                        IsChecked="{Binding Settings.Settings.DataMember}"
+                        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
+                    <mahapp:MetroHeader Margin="5" Header="Prefix" />
+                    <TextBox
+                        Margin="5"
+                        HorizontalContentAlignment="Stretch"
+                        Text="{Binding Settings.Settings.Prefix, UpdateSourceTrigger=PropertyChanged}" />
+                    <mahapp:MetroHeader Margin="5" Header="Postfix" />
+                    <TextBox
+                        Margin="5"
+                        HorizontalContentAlignment="Stretch"
+                        Text="{Binding Settings.Settings.Postfix, UpdateSourceTrigger=PropertyChanged}" />
+                    <mahapp:MetroHeader Margin="5" Header="CRUD prefix" />
+                    <TextBox
+                        Margin="5"
+                        HorizontalContentAlignment="Stretch"
+                        Text="{Binding Settings.Settings.CRUD_prefix, UpdateSourceTrigger=PropertyChanged}" />
+                    <mahapp:MetroHeader Margin="5" Header="CRUD postfix" />
+                    <TextBox
+                        Margin="5"
+                        HorizontalContentAlignment="Stretch"
+                        Text="{Binding Settings.Settings.CRUD_postfix, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </mahapp:Flyout>
         </mahapp:FlyoutsControl>
@@ -84,19 +98,19 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Menu BorderBrush="{DynamicResource BorderBrushNormal}" BorderThickness="1">
-           
-            <MenuItem x:Name="StyleItem" Header="Style" >
-                <MenuItem  Header="Accent" ItemsSource="{Binding AccentColors}" >
-                    
+
+            <MenuItem x:Name="StyleItem" Header="Style">
+                <MenuItem Header="Accent" ItemsSource="{Binding AccentColors}">
+
                     <MenuItem.ItemContainerStyle>
-                        <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}" >
-                            <Setter Property="Foreground" Value="{Binding Color}"/>
-                            <Setter Property="Header" Value="{Binding Name}"/>
+                        <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                            <Setter Property="Foreground" Value="{Binding Color}" />
+                            <Setter Property="Header" Value="{Binding Name}" />
                             <Setter Property="Command" Value="{Binding ChangeAccentCommand}" />
                             <Setter Property="CommandParameter" Value="{Binding Name}" />
 
@@ -109,64 +123,104 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Settings">
-                <MenuItem Header="Type conversion" Command="{Binding TypeConversionSettings}" >
+                <MenuItem Command="{Binding TypeConversionSettingsCommand}" Header="Type conversion">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="FormatListBulletedType" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Data annotations" Command="{Binding DataAnnotationsSettings}" >
+                <MenuItem Command="{Binding DataAnnotationsSettingsCommand}" Header="Data annotations">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="FormatAnnotationPlus" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding TemplateSettingsCommand}" CommandParameter="p" Header="Property Template">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Settings" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding TemplateSettingsCommand}" CommandParameter="fp" Header="Full Property Template">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Settings" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding TemplateSettingsCommand}" CommandParameter="c" Header="Class Template">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Settings" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="3" />
+                <ColumnDefinition Width="8*" />
             </Grid.ColumnDefinitions>
-            <Grid  >
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                <TreeView x:Name="TreeViewConn" ItemsSource="{Binding XMLCore.Connections}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                <TreeView
+                    x:Name="TreeViewConn"
+                    ItemsSource="{Binding XMLCore.Connections}"
+                    SelectedItemChanged="TreeView_SelectedItemChanged">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Databases}">
                             <Grid Margin="2">
-                                <ProgressBar Panel.ZIndex="2" Visibility="{Binding LoadConnection,Converter={StaticResource VisToBoolean}}" IsIndeterminate="{Binding LoadConnection}" ></ProgressBar>
+                                <ProgressBar
+                                    Panel.ZIndex="2"
+                                    IsIndeterminate="{Binding LoadConnection}"
+                                    Visibility="{Binding LoadConnection, Converter={StaticResource VisToBoolean}}" />
                                 <WrapPanel>
-                                    <Image Source="{Binding Connection.Icon}" Width="15" Margin="0 0 5 0"></Image>
+                                    <Image
+                                        Width="15"
+                                        Margin="0,0,5,0"
+                                        Source="{Binding Connection.Icon}" />
                                     <!--<iconPacks:PackIconSimpleIcons Kind="{Binding Connection.Icon}" Margin="0 0 5 0"></iconPacks:PackIconSimpleIcons>-->
                                     <TextBlock Text="{Binding Connection.ConnectionName}" />
                                 </WrapPanel>
 
-                                <Button Tag="{Binding Connection.ConnectionName}" HorizontalAlignment="Right" Click="ConnectRefreshButton_Click"  >
+                                <Button
+                                    HorizontalAlignment="Right"
+                                    Click="ConnectRefreshButton_Click"
+                                    Tag="{Binding Connection.ConnectionName}">
                                     <iconPacks:PackIconModern Padding="2" Kind="Refresh" />
                                 </Button>
                             </Grid>
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <HierarchicalDataTemplate ItemsSource="{Binding Tables}">
                                     <Grid Margin="2">
-                                        <ProgressBar Panel.ZIndex="2"  HorizontalAlignment="Stretch" Visibility="{Binding LoadConnection,Converter={StaticResource VisToBoolean}}" IsIndeterminate="{Binding LoadConnection}" ></ProgressBar>
+                                        <ProgressBar
+                                            HorizontalAlignment="Stretch"
+                                            Panel.ZIndex="2"
+                                            IsIndeterminate="{Binding LoadConnection}"
+                                            Visibility="{Binding LoadConnection, Converter={StaticResource VisToBoolean}}" />
                                         <WrapPanel>
-                                            <CheckBox IsChecked="{Binding Checked }"></CheckBox>
-                                            <iconPacks:PackIconMaterial Kind="Database" Padding="2" Margin="0 0 2 0"></iconPacks:PackIconMaterial>
+                                            <CheckBox IsChecked="{Binding Checked}" />
+                                            <iconPacks:PackIconMaterial
+                                                Margin="0,0,2,0"
+                                                Padding="2"
+                                                Kind="Database" />
                                             <TextBlock Text="{Binding DatabaseName}" />
                                         </WrapPanel>
 
-                                        <Button  Tag="{Binding}" HorizontalAlignment="Right" Click="DatabaseRefreshButton_Click" >
+                                        <Button
+                                            HorizontalAlignment="Right"
+                                            Click="DatabaseRefreshButton_Click"
+                                            Tag="{Binding}">
                                             <iconPacks:PackIconModern Padding="2" Kind="Refresh" />
                                         </Button>
                                     </Grid>
 
                                     <HierarchicalDataTemplate.ItemTemplate>
-                                        <DataTemplate >
+                                        <DataTemplate>
                                             <WrapPanel>
-                                                <CheckBox IsChecked="{Binding Checked }"></CheckBox>
-                                                <iconPacks:PackIconMaterial Kind="Table" Padding="2" Margin="0 0 2 0"></iconPacks:PackIconMaterial>
+                                                <CheckBox IsChecked="{Binding Checked}" />
+                                                <iconPacks:PackIconMaterial
+                                                    Margin="0,0,2,0"
+                                                    Padding="2"
+                                                    Kind="Table" />
                                                 <TextBlock Text="{Binding TableName}" />
                                             </WrapPanel>
                                         </DataTemplate>
@@ -176,28 +230,51 @@
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
-                <Grid Grid.Row="1" >
-                    <Grid >
+                <Grid Grid.Row="1">
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Button  Margin="2" Grid.Column="0"  Click="NewButton_Click">
+                        <Button
+                            Grid.Column="0"
+                            Margin="2"
+                            Click="NewButton_Click">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconModern Kind="Add" Height="30" Padding="2" Margin="0 0 2 0"></iconPacks:PackIconModern>
+                                <iconPacks:PackIconModern
+                                    Height="30"
+                                    Margin="0,0,2,0"
+                                    Padding="2"
+                                    Kind="Add" />
                                 <!--<TextBlock>New</TextBlock>-->
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding EditConnection}" IsEnabled="{Binding EditEnable}"  Margin="2" Grid.Column="1" >
+                        <Button
+                            Grid.Column="1"
+                            Margin="2"
+                            Command="{Binding EditConnection}"
+                            IsEnabled="{Binding EditEnable}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconModern Kind="Edit" Height="30" Padding="2" Margin="0 0 2 0"></iconPacks:PackIconModern>
+                                <iconPacks:PackIconModern
+                                    Height="30"
+                                    Margin="0,0,2,0"
+                                    Padding="2"
+                                    Kind="Edit" />
                                 <!--<TextBlock>Edit</TextBlock>-->
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding DeleteConnection}" IsEnabled="{Binding EditEnable}"  Margin="2" Grid.Column="2"  >
+                        <Button
+                            Grid.Column="2"
+                            Margin="2"
+                            Command="{Binding DeleteConnection}"
+                            IsEnabled="{Binding EditEnable}">
                             <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconModern Height="30" Kind="Delete" Padding="2" Margin="0 0 2 0"></iconPacks:PackIconModern>
+                                <iconPacks:PackIconModern
+                                    Height="30"
+                                    Margin="0,0,2,0"
+                                    Padding="2"
+                                    Kind="Delete" />
                                 <!--<TextBlock>Delete</TextBlock>-->
                             </StackPanel>
                         </Button>
@@ -206,87 +283,177 @@
             </Grid>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
 
-            <Grid Grid.Column="2" >
+            <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Margin="5">
-                    <Button Command="{Binding ModelCommand}" Margin="2 0" Width="100"  >
-                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <Button
+                        Width="100"
+                        Margin="2,0"
+                        Command="{Binding ModelCommand}">
+                        <Grid
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <iconPacks:PackIconMaterial Margin="0 5 0 0" Height="15" Width="15" Kind="Table" HorizontalAlignment="Center"></iconPacks:PackIconMaterial>
+                            <iconPacks:PackIconMaterial
+                                Width="15"
+                                Height="15"
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Center"
+                                Kind="Table" />
                             <Label Grid.Row="1" HorizontalAlignment="Center">ENTITY</Label>
                         </Grid>
 
 
                     </Button>
-                    <Button Command="{Binding CoreCommand}" Margin="2 0" Width="100"  >
-                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                    <Button
+                        Width="100"
+                        Margin="2,0"
+                        Command="{Binding CoreCommand}">
+                        <Grid
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <iconPacks:PackIconMaterial Margin="0 5 0 0" Height="15" Width="15" Kind="DatabaseExport" HorizontalAlignment="Center"></iconPacks:PackIconMaterial>
+                            <iconPacks:PackIconMaterial
+                                Width="15"
+                                Height="15"
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Center"
+                                Kind="DatabaseExport" />
                             <Label Grid.Row="1" HorizontalAlignment="Center">CRUD</Label>
                         </Grid>
                     </Button>
-                    <Button Command="{Binding SelectToEntityCommand}" Margin="2 0" Width="150"  >
-                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                    <Button
+                        Width="150"
+                        Margin="2,0"
+                        Command="{Binding SelectToEntityCommand}">
+                        <Grid
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <iconPacks:PackIconMaterial Margin="0 5 0 0" Height="15" Width="15" Kind="Select" HorizontalAlignment="Center"></iconPacks:PackIconMaterial>
-                            <Label Grid.Row="1" HorizontalAlignment="Center">QUERY -> ENTITY</Label>
+                            <iconPacks:PackIconMaterial
+                                Width="15"
+                                Height="15"
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Center"
+                                Kind="Select" />
+                            <Label Grid.Row="1" HorizontalAlignment="Center">QUERY -&gt; ENTITY</Label>
                         </Grid>
                     </Button>
-                    <Button Command="{Binding CreateIntoFilesCommand}" Margin="2 0" Width="150"  >
-                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                    <Button
+                        Width="150"
+                        Margin="2,0"
+                        Command="{Binding CreateIntoFilesCommand}">
+                        <Grid
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <iconPacks:PackIconMaterial Margin="0 5 0 0" Height="15" Width="15" Kind="File" HorizontalAlignment="Center"></iconPacks:PackIconMaterial>
+                            <iconPacks:PackIconMaterial
+                                Width="15"
+                                Height="15"
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Center"
+                                Kind="File" />
                             <Label Grid.Row="1" HorizontalAlignment="Center">CREATE INTO FILES</Label>
                         </Grid>
                     </Button>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="1"  Margin="5">
-                    <Button Command="{Binding SettingsShow}" Margin="2 0" Width="150"  >
-                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="5"
+                    Orientation="Horizontal">
+                    <Button
+                        Width="150"
+                        Margin="2,0"
+                        Command="{Binding SettingsShow}">
+                        <Grid
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
-                            <iconPacks:PackIconMaterial Margin="0 5 0 0" Height="15" Width="15" Kind="Settings" HorizontalAlignment="Center"></iconPacks:PackIconMaterial>
-                            <Label  Grid.Row="1" HorizontalAlignment="Center">FAST SETTINGS</Label>
+                            <iconPacks:PackIconMaterial
+                                Width="15"
+                                Height="15"
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Center"
+                                Kind="Settings" />
+                            <Label Grid.Row="1" HorizontalAlignment="Center">FAST SETTINGS</Label>
                         </Grid>
                     </Button>
 
                 </StackPanel>
-                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="8">
+                <Grid
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="8">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="13"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="13" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <mahapp:ProgressRing IsActive="{Binding Load}"   Panel.ZIndex="5" Height="50" Width="50"  VerticalAlignment="Center" HorizontalAlignment="Center"  >
-
-                    </mahapp:ProgressRing>
-                    <avalon:TextEditor Grid.Row="0"  Document="{Binding Document}" Name="HLeditor" WordWrap="False" IsModified="False" LineNumbersForeground="{DynamicResource Foreground}" VerticalScrollBarVisibility="Auto"  ShowLineNumbers="True" SyntaxHighlighting="C#" FontSize="12pt" Background="{DynamicResource Background}" Foreground="{DynamicResource Foreground}" PreviewMouseWheel="HLeditor_PreviewMouseWheel" />
-                    <GridSplitter Margin="0 5 0 5" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    <mahapp:ProgressRing IsActive="{Binding LoadSchema}" Grid.Row="2"   Panel.ZIndex="5" Height="50" Width="50"  VerticalAlignment="Center" HorizontalAlignment="Center"  >
-
-                    </mahapp:ProgressRing>
-                    <DataGrid  ItemsSource="{Binding SchemaInfo}" Grid.Row="2" AutoGenerateColumns="True"  />
+                    <mahapp:ProgressRing
+                        Width="50"
+                        Height="50"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Panel.ZIndex="5"
+                        IsActive="{Binding Load}" />
+                    <avalon:TextEditor
+                        Name="HLeditor"
+                        Grid.Row="0"
+                        Background="{DynamicResource Background}"
+                        Document="{Binding Document}"
+                        FontSize="12pt"
+                        Foreground="{DynamicResource Foreground}"
+                        IsModified="False"
+                        LineNumbersForeground="{DynamicResource Foreground}"
+                        PreviewMouseWheel="HLeditor_PreviewMouseWheel"
+                        ShowLineNumbers="True"
+                        SyntaxHighlighting="C#"
+                        VerticalScrollBarVisibility="Auto"
+                        WordWrap="False" />
+                    <GridSplitter
+                        Grid.Row="1"
+                        Margin="0,5,0,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />
+                    <mahapp:ProgressRing
+                        Grid.Row="2"
+                        Width="50"
+                        Height="50"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Panel.ZIndex="5"
+                        IsActive="{Binding LoadSchema}" />
+                    <DataGrid
+                        Grid.Row="2"
+                        AutoGenerateColumns="True"
+                        ItemsSource="{Binding SchemaInfo}" />
                 </Grid>
 
 
