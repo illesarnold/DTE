@@ -9,7 +9,7 @@ Desktop WPF
 ![alt text](https://github.com/illesarnold/DTE/blob/master/Images/scs2.png)
 
 # Libs that I use
-MahApps.Metro
-MahApps.Metro.IconPacks
-Dapper
-AvalonEdit
+- MahApps.Metro
+- MahApps.Metro.IconPacks
+- Dapper
+- AvalonEdit
