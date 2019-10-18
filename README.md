@@ -1,5 +1,5 @@
 # DTE
-Database Table To C# Entity
+Database Table To C# Entity  
 Generate C# class from database table
 
 Desktop WPF
