@@ -103,13 +103,18 @@ namespace DTE.Cores
             var tablename = dt.TableName;
 
 
-
-            string model = "";
+            var class_annotations = "";
+            string properties = "";
+            
             if (_settings.DataAnnotations)
-                model += $"[{_settings.Attributes.Table}(\"{tablename}\")] \r\n";
+                class_annotations += $"[{_settings.Attributes.Table}(\"{tablename}\")] \r\n";
             if (_settings.DataMember)
-                model += $"\t[DataContract]\r\n";
-            model += $"public class {_settings.Prefix}{ColumnNameToPropName(tablename).Replace("_", "")}{_settings.Postfix}\r\n{{\r\n";
+                class_annotations += $"\t[DataContract]\r\n";
+
+            var class_name = ColumnNameToPropName(tablename).Replace("_", "");
+
+
+           
 
 
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -139,7 +144,7 @@ namespace DTE.Cores
                 if (isKey)
                 {
                     if (_settings.DataAnnotations && auto_increment)
-                        annotations += $"    [{_settings.Attributes.Key}]";
+                        annotations += $"\r\n    [{_settings.Attributes.Key}]";
                     if (_settings.DataAnnotations && auto_increment == false)
                         annotations += $"    [{_settings.Attributes.ExplicitKey}]";
                 }
@@ -148,18 +153,30 @@ namespace DTE.Cores
 
                 if (_settings.FullProp)
                 {
-                    model = FullPropText(model, column_name, name, comment, cType,annotations);
+                    properties = FullPropText(properties, column_name, name, comment, cType,annotations);
 
                 }
                 else
                 {
-                    model = PropText(model, column_name, name, comment, cType,annotations);
+                    properties = PropText(properties, column_name, name, comment, cType,annotations);
                 }
 
 
 
             }
-            return model += "}";
+
+
+
+
+
+            return _settings.ClassTemplate?.Replace("[Annotations]", class_annotations)
+                                          ?.Replace("[Prefix]", _settings.Prefix)
+                                          ?.Replace("[Name]", class_name)
+                                          ?.Replace("[Postfix]", _settings.Postfix)
+                                          ?.Replace("[Properties]", properties);
+
+
+
 
         }
 

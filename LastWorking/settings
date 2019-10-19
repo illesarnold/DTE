@@ -145,18 +145,22 @@
   <Nullable>true</Nullable>
   <Static>false</Static>
   <CaseSensitivity>false</CaseSensitivity>
-  <Prefix></Prefix>
+  <Prefix />
   <Postfix>Dto</Postfix>
   <Comments>false</Comments>
   <DataAnnotations>true</DataAnnotations>
+  <FullProp>false</FullProp>
+  <DataMember>false</DataMember>
   <FullPropTemplate>
-    private [Type] _[PrivateName]; [Annotations]
+    private [Type] _[PrivateName]; 
+    [Annotations]
     public [Type] [PublicName] { get =&gt; _[PrivateName]; set =&gt; this.RaiseAndSetIfChanged(ref  _[PrivateName], value); } [Comment]
   </FullPropTemplate>
   <PropTemplate>[Annotations]
     public [Type] [PublicName] { get =&gt; _[PrivateName]; set =&gt;  _[PrivateName]; } [Comment]
   </PropTemplate>
   <ClassTemplate>
+    [Annotations]
     public class [Prefix][Name][Postfix]
     {
         [Properties]

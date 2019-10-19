@@ -157,6 +157,7 @@
     public [Type] [PublicName] { get =&gt; _[PrivateName]; set =&gt;  _[PrivateName]; } [Comment]
   </PropTemplate>
   <ClassTemplate>
+    [Annotations]
     public class [Prefix][Name][Postfix]
     {
         [Properties]
