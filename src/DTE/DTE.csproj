@@ -265,13 +265,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Resource Include="Images\scs.png" />
-    <Resource Include="Images\scs2.png" />
-    <Resource Include="Images\scs3.png" />
-    <Resource Include="Images\scs4.png" />
     <Resource Include="dte.ico" />
-    <Resource Include="Images\dte.ico" />
-    <Resource Include="Images\dte.png" />
     <EmbeddedResource Include="Resources\csharp.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
