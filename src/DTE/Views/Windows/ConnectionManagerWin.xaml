@@ -1,0 +1,72 @@
+﻿<mahapps:MetroWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:local="clr-namespace:DTE.Views.Windows"
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        Dialog:DialogParticipation.Register="{Binding}"
+        xmlns:ViewModels="clr-namespace:DTE.ViewModels" x:Class="DTE.Views.Windows.ConnectionManagerWin"
+        xmlns:converters="clr-namespace:DTE.Converters"
+        mc:Ignorable="d" Width="650" Height="450"
+        Title="Connection"  WindowStartupLocation="CenterScreen" ResizeMode="CanResize" >
+    <mahapps:MetroWindow.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </mahapps:MetroWindow.Resources>
+    <mahapps:MetroWindow.DataContext>
+        <ViewModels:ConnectionManagerVM/>
+    </mahapps:MetroWindow.DataContext>
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="10">
+            <StackPanel Visibility="Collapsed">
+                <Label Content="Connection string"/>
+                <TextBox Text="{Binding ConnectionBuilder.ConnectionString}"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Name"/>
+                <TextBox Text="{Binding  ConnectionBuilder.ConnectionName}"/>
+            </StackPanel>
+            <StackPanel MaxWidth="250" MinWidth="150" HorizontalAlignment="Left">
+                <Label Content="Connection Type"/>
+                <ComboBox ItemsSource="{Binding ConnTypes}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  SelectedConnection}" />
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0 0 5 0">
+                    <Label Content="Host"/>
+                    <TextBox Text="{Binding  ConnectionBuilder.Host}"/>
+                </StackPanel>
+                <StackPanel Margin="5 0 0 0" Grid.Column="1">
+                    <Label Content="Port"/>
+                    <TextBox Text="{Binding  ConnectionBuilder.Port}"/>
+                </StackPanel>
+            </Grid>
+            <StackPanel>
+                <CheckBox x:Name="WACheckBox" Margin="2 12" Content="Windows authentication" IsChecked="{Binding ConnectionBuilder.IsWindowsAuthentication}"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Username"/>
+                <TextBox IsEnabled="{Binding ElementName=WACheckBox, Path=IsChecked,Converter={StaticResource InverseBooleanConverter}}" Text="{Binding ConnectionBuilder.UserName}"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Password"/>
+                <PasswordBox IsEnabled="{Binding ElementName=WACheckBox, Path=IsChecked,Converter={StaticResource InverseBooleanConverter}}" Name="password" PasswordChanged="PasswordBox_PasswordChanged"/>
+            </StackPanel>
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Command="{Binding TestConnection}" HorizontalAlignment="Right" Margin="5" Content="Test Connection" Height="25" Width="150" />
+                <Button IsDefault="True"  HorizontalAlignment="Right" Margin="5" Content="Connect" Height="25" Width="150" Click="ConnectButton_Click" />
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</mahapps:MetroWindow>

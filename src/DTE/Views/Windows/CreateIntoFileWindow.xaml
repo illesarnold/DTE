@@ -1,0 +1,58 @@
+﻿<mahapps:MetroWindow
+    x:Class="DTE.Views.Windows.CreateIntoFileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DTE.Views.Windows"
+        mc:Ignorable="d"
+        Title="CREATE INTO FILES" Height="389.064" Width="728.821"
+    xmlns:ViewModels="clr-namespace:DTE.ViewModels"
+    xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+    WindowStartupLocation="CenterScreen"
+     >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ProgressBar Maximum="{Binding AllTablesCount}" Value="{Binding CreatedTablesCount}" Height="3"/>
+        <StackPanel Grid.Row="1">
+            <Grid Margin="0 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding ProjectPath}"/>
+                <Button Grid.Column="1" Content="Project" Margin="2 0" Command="{Binding SelectProjectPathCommand}"/>
+            </Grid>
+            <Grid Margin="0 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding DestinationPath}"/>
+                <Button Grid.Column="1" Content="Folder" Margin="2 0" Command="{Binding SelectFolderPathCommand}"/>
+            </Grid>
+            <WrapPanel Margin="0 2">
+                <Label Content="Namespace"/>
+                <TextBox Width="150" VerticalAlignment="Center" Text="{Binding NameSpace}"/>
+            </WrapPanel>
+        </StackPanel>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Tables}" IsReadOnly="True" CanUserDeleteRows="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Checked" Binding="{Binding Checked}" />
+                <DataGridTextColumn Header="Database" Binding="{Binding DataBaseName}"/>
+                <DataGridTextColumn Header="Table" Binding="{Binding TableName}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button IsDefault="True"  HorizontalAlignment="Right" Margin="5" Content="Create" Height="25" Width="150" Command="{Binding CreateCommand}" />
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</mahapps:MetroWindow>

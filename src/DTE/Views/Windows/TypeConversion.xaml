@@ -1,0 +1,35 @@
+﻿    <mahapps:MetroWindow
+       x:Class="DTE.Views.Windows.TypeConversion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+         xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:DTE.Views.Windows"
+        xmlns:ViewModels="clr-namespace:DTE.ViewModels" 
+        Dialog:DialogParticipation.Register="{Binding}"
+        mc:Ignorable="d"
+        Title="Type conversion settings" Height="500" Width="800" WindowStartupLocation="CenterScreen">
+    <mahapps:MetroWindow.DataContext>
+        <ViewModels:TypeConversionVM/>
+    </mahapps:MetroWindow.DataContext>
+    <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid >
+            <DataGrid AutoGenerateColumns="True" ItemsSource="{Binding Settings.Settings.Types}" ColumnWidth="*"  SelectionUnit="Cell"  Margin="5" >
+                
+            </DataGrid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Height="30" Command="{Binding Save}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Margin="5" Width="150" Content="Save"/>
+                    <Button Height="30" Margin="5" Width="150" Content="Cancel" Click="Button_Click"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </mahapps:MetroWindow>
+
