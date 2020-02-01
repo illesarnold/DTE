@@ -1,7 +1,6 @@
 # DTE
-Database Table To C# Entity  
-Generate C# class from database table
-
+Generate POCO class from (SQL,MYSQL) database.
+Generate class from query or view.
 Desktop WPF
 
 # Images
