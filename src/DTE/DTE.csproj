@@ -119,6 +119,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Architecture\Microservice\Microservice.cs" />
+    <Compile Include="Architecture\Peasy\Peasy.cs" />
+    <Compile Include="Architecture\Peasy\PeasyConstants.cs" />
     <Compile Include="ConnectionCore\Builders\BuilderBase.cs" />
     <Compile Include="ConnectionCore\Builders\NpgSQLConnectionBuilder.cs" />
     <Compile Include="ConnectionCore\Builders\MSSQLConnectionBuilder.cs" />

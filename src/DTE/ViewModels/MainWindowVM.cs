@@ -160,10 +160,58 @@ namespace DTE.ViewModels
         }
         private void CreateIntoFilesAsync()
         {
-            var selectedTreeModel = GetConnectionByNode();
-            if (selectedTreeModel is null)
+            var selectedTables = GetTablesForModelCreate();
+            if (selectedTables is null)
                 return;
-             new CreateIntoFileWindow(selectedTreeModel, SelectedNode as Database,SelectedNode as Table,CheckSelection(selectedTreeModel)).ShowDialog();
+
+            new CreateIntoFileWindow(selectedTables).ShowDialog();
+        }
+
+        public List<Table> GetTablesForModelCreate()
+        {
+            try
+            {
+                var selectedTreeModel = GetConnectionByNode();
+                if (selectedTreeModel is null)
+                    return null;
+
+                var isChecked = CheckSelection(selectedTreeModel);
+                List<Table> Tables = new List<Table>();
+
+                if (isChecked)
+                {
+                    foreach (var database in (SelectedNode as ITreeViewModel).ParentTreeBase.Databases)
+                    {
+                        if (database == null || database.Tables == null || database.Tables.Count == 0)
+                            continue;
+
+                        var local_tables = database.Tables.Where(x => x.Checked);
+
+                        if (local_tables == null)
+                            continue;
+                        foreach (var table in local_tables)
+                            Tables.Add(table);
+                    }
+                }
+                else if ((SelectedNode as Database) != null)
+                {
+                    foreach (var table in (SelectedNode as Database).Tables)
+                        Tables.Add(table);
+
+                }
+                else if ((SelectedNode as Table) != null)
+                {
+                    Tables.Add((SelectedNode as Table));
+                }
+
+                return Tables;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            return null;
         }
 
         private async void ModelCreateAsync()
@@ -179,25 +227,10 @@ namespace DTE.ViewModels
                     return;
                 }
 
-
-                var dteCore = Globals.CreateCoreByConnection(selectedNode.ConnectionBuilder);
                 Settings.SettingsDeserialize();
+                var tables = GetTablesForModelCreate();
+                Document.Text = await CreateModelsAsync(tables) ?? "";
 
-                bool isCheckboxChecked = CheckSelection(selectedNode);
-
-                if (isCheckboxChecked)
-                {
-                    Document.Text = await CreateModels(selectedNode.Databases.ToList()) ?? "";
-                }
-                else
-                {
-                    if (SelectedNode is Table)
-                    {
-                        var table = SelectedNode as Table;
-                        Document.Text = await dteCore.CreateModelAsync(table.DataBaseName, table.TableName) ?? "";
-                    }
-
-                }
             }
             catch (Exception ex)
             {
@@ -208,7 +241,7 @@ namespace DTE.ViewModels
 
 
         }
-        private async Task<string> CreateModels(List<Database> databases)
+        private async Task<string> CreateModelsAsync(List<Table> tables)
         {
             string model_code = "";
             try
@@ -219,21 +252,10 @@ namespace DTE.ViewModels
 
                 var dteCore = Globals.CreateCoreByConnection(selectedNode.ConnectionBuilder);
 
-                foreach (var database in selectedNode.Databases)
+                foreach (var table in tables)
                 {
-                    if (database == null || database.Tables == null || database.Tables.Count == 0)
-                        continue;
-
-                    var tables = database.Tables.Where(x => x.Checked);
-
-                    if (tables == null)
-                        continue;
-
-                    foreach (var table in tables)
-                    {
-                        model_code += await dteCore.CreateModelAsync(database.DatabaseName, table.TableName);
-                        model_code += Environment.NewLine;
-                    }
+                    model_code += await dteCore.CreateModelAsync(table.DataBaseName, table.TableName);
+                    model_code += Environment.NewLine;
                 }
             }
             catch (Exception ex)
@@ -269,30 +291,9 @@ namespace DTE.ViewModels
         private TreeViewModel GetConnectionByNode()
         {
             if (SelectedNode == null)
-            {
                 GetFirstCheckedConnection();
-            }
 
-            if (SelectedNode is TreeViewModel)
-            {
-                return (SelectedNode as TreeViewModel);
-            }
-            else if (SelectedNode is DTE.Domains.Database)
-            {
-                var db = SelectedNode as Database;
-
-                return db.ParentTreeBase;
-            }
-            else if (SelectedNode is Table)
-            {
-                var table = SelectedNode as Table;
-
-                return table.ParentTreeBase;
-            }
-
-
-
-            return null;
+            return (SelectedNode as ITreeViewModel).ParentTreeBase;
         }
         private void GetFirstCheckedConnection()
         {

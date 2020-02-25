@@ -26,10 +26,10 @@ namespace DTE.Views.Windows
             InitializeComponent();
             DataContext = new CreateIntoFilesVM();
         }
-        public CreateIntoFileWindow(TreeViewModel selectedNode,Database selectedDatabase,Table selectedTable,bool isChecked)
+        public CreateIntoFileWindow(List<Table> tables)
         {
             InitializeComponent();
-            DataContext = new CreateIntoFilesVM(selectedNode,selectedDatabase,selectedTable,isChecked);
+            DataContext = new CreateIntoFilesVM(tables);
         }
     }
 }

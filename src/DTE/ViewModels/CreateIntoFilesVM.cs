@@ -66,13 +66,10 @@ namespace DTE.ViewModels
         {
 
         }
-        public CreateIntoFilesVM(TreeViewModel selectedNode, Database selectedDatabase, Table selectedTable, bool isChecked)
+        public CreateIntoFilesVM(List<Table> tables)
         {
-            SelectedNode = selectedNode;
-            SelectedDatabase = selectedDatabase;
-            SelectedTable = selectedTable;
-            IsChecked = isChecked;
-            LoadTablesAsync();
+            Tables = new ObservableCollection<Table>(tables);
+            AllTablesCount = Tables.Count;
         }
 
         public async void CreateFilesAsync()
@@ -113,45 +110,7 @@ namespace {NameSpace}
             }
         }
 
-        public async void LoadTablesAsync()
-        {
-            try
-            {
-                if (SelectedNode == null)
-                    return;
-
-                if (IsChecked)
-                {
-                    foreach (var database in SelectedNode.Databases)
-                    {
-                        if (database == null || database.Tables == null || database.Tables.Count == 0)
-                            continue;
-
-                        var local_tables = await Task.Run(() => database.Tables.Where(x => x.Checked));
-
-                        if (local_tables == null)
-                            continue;
-                        foreach (var table in local_tables)
-                            Tables.Add(table);
-                    }
-                }
-                else if (SelectedDatabase != null)
-                {
-                    AllTablesCount = SelectedDatabase.Tables.Count;
-                    foreach (var table in SelectedDatabase.Tables)
-                        Tables.Add(table);
-
-                }
-                else if (SelectedTable != null)
-                {
-                    Tables.Add(SelectedTable);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
+       
 
         private async Task CreateModelThanSave(string base_code, DTECore dteCore, Settings settings, string database, Table table)
         {
