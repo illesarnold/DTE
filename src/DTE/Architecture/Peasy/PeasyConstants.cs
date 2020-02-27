@@ -8,9 +8,11 @@ namespace DTE.Architecture
 {
     public class PeasyConstants
     {
-        public const string ReplaceNameSpace = "[namespace]";
-        public const string ReplaceProjectName = "[projectName]";
-        public string PeasyDomainBaseDefaultTemplate = $@"using Peasy;
+        private const string ReplaceNameSpace = "[namespace]";
+        private const string ReplaceProjectName = "[projectName]";
+        private const string ReplaceModelCode = "[ModelCode]";
+        private const string ReplaceModelName = "[ModelName]";
+        private static string PeasyDomainBaseDefaultTemplate = $@"using Peasy;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
@@ -38,7 +40,7 @@ namespace {ReplaceNameSpace}
     }}
 }}
 ";
-        public string PeasyDataProxyDefaultTemplate = $@"using Peasy;
+        private static string PeasyDataProxyDefaultTemplate = $@"using Peasy;
 namespace {ReplaceNameSpace}
 {{
 {{
@@ -46,7 +48,7 @@ namespace {ReplaceNameSpace}
     {{
     }}
 }}";
-        public string PeasyServiceDefaultTemplate = $@"using Peasy;
+        private static string PeasyServiceDefaultTemplate = $@"using Peasy;
 using {ReplaceNameSpace}.DataProxy;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -107,5 +109,47 @@ namespace {ReplaceNameSpace}
     }}
 }}
 ";
+        private static string PeasyDomainTemplate = $@"using System.ComponentModel.DataAnnotations;
+
+namespace {ReplaceNameSpace}.Domain
+{{
+    {ReplaceModelCode}
+}}";
+        private static string PeasyDataProxyTemplate = $@"using Orders.com.BLL.Domain;
+
+namespace {ReplaceNameSpace}.DataProxy
+{{
+    public interface I{ReplaceModelName}DataProxy : I{ReplaceProjectName}DataProxy<{ReplaceModelName}>
+    {{
+    }}
+}}";
+        private static string PeasyServiceTemplate = $@"using {ReplaceNameSpace}.Domain;
+using Peasy;
+
+namespace {ReplaceNameSpace}.Services
+{{
+    public interface I{ReplaceModelName}Service : IService<{ReplaceModelName}, long>
+    {{
+    }}
+}}";
+
+
+        public static string GetDomainTemplate(string nameSpace,string modelCode)
+        {
+            return PeasyDomainTemplate.Replace(ReplaceNameSpace, nameSpace).Replace(ReplaceModelCode, modelCode);
+        }
+        public static string GetDataProxyTemplate(string nameSpace,string projectName, string modelName)
+        {
+            return PeasyDataProxyTemplate
+                .Replace(ReplaceNameSpace, nameSpace)
+                .Replace(ReplaceProjectName, projectName)
+                .Replace(ReplaceModelName, modelName);
+        }
+        public static string GetServiceTemplate(string nameSpace, string modelName)
+        {
+            return PeasyServiceTemplate.Replace(ReplaceNameSpace, nameSpace).Replace(ReplaceModelName, modelName);
+        }
+
     }
 }
+
