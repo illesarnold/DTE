@@ -1,6 +1,4 @@
-﻿using DTE.CORE;
-using DTE.Domains;
-using DTE.ViewModels;
+﻿using DTE.ViewModels;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,19 +17,18 @@ using System.Windows.Shapes;
 namespace DTE.Views.Windows
 {
     /// <summary>
-    /// Interaction logic for CreateIntoFileWindow.xaml
+    /// Interaction logic for GeneratePeasyWindow.xaml
     /// </summary>
-    public partial class CreateIntoFileWindow : MetroWindow
+    public partial class GeneratePeasyWindow : MetroWindow
     {
-        public CreateIntoFileWindow()
+        public GeneratePeasyWindow()
         {
             InitializeComponent();
-            DataContext = new CreateIntoFilesVM();
         }
-        public CreateIntoFileWindow(List<Table> tables,DTECore dTECore)
+        public GeneratePeasyWindow(List<Domains.Table> selectedTables, CORE.DTECore dteCore)
         {
             InitializeComponent();
-            DataContext = new CreateIntoFilesVM(tables,dTECore);
+            DataContext = new PeasyVM(selectedTables,dteCore);
         }
     }
 }

@@ -146,6 +146,7 @@
     <Compile Include="ViewModels\ConnectionManagerVM.cs" />
     <Compile Include="ViewModels\CreateIntoFilesVM.cs" />
     <Compile Include="ViewModels\DataAnnotationsVM.cs" />
+    <Compile Include="ViewModels\PeasyVM.cs" />
     <Compile Include="ViewModels\TemplateVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="ViewModels\QueryToEntityVM.cs" />
@@ -159,6 +160,9 @@
     </Compile>
     <Compile Include="Views\Windows\DataAnnotationsWindow.xaml.cs">
       <DependentUpon>DataAnnotationsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\GeneratePeasyWindow.xaml.cs">
+      <DependentUpon>GeneratePeasyWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\TemplateWindow.xaml.cs">
       <DependentUpon>TemplateWindow.xaml</DependentUpon>
@@ -208,6 +212,10 @@
     <Page Include="Views\Windows\DataAnnotationsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\GeneratePeasyWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Windows\TemplateWindow.xaml">
       <SubType>Designer</SubType>

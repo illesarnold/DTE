@@ -11,24 +11,23 @@ namespace DTE.CORE
     public class DTECore : IDTE
     {
         public IDTE DTEService { get; set; }
-        private ISettings _settings;
+        public readonly ISettings Settings;
         public DTECore(SupportedConnectionsTypes type, string connection_String, ISettings settings)
         {
-            _settings = settings;
+            Settings = settings;
             DTEService = DteCoreFactory.CreateDTECore(type, connection_String);
         }
 
         private string CreateModel(DataTable dt, DataTable table_describe = null)
         {
             var tablename = dt.TableName.Split('.').Last();
+            var class_name = Helpers.ModelCreateHelper.ColumnNameToPropName(tablename).Replace("_", "");
             var class_annotations = "";
             string properties = "";
-            var class_name = Helpers.ModelCreateHelper.ColumnNameToPropName(tablename).Replace("_", "");
 
-
-            if (_settings.DataAnnotations)
-                class_annotations += $"[{_settings.Attributes.Table}(\"{tablename}\")]"+Environment.NewLine;
-            if (_settings.DataMember)
+            if (Settings.DataAnnotations)
+                class_annotations += $"[{Settings.Attributes.Table}(\"{tablename}\")]"+Environment.NewLine;
+            if (Settings.DataMember)
                 class_annotations += string.IsNullOrEmpty(class_annotations) ?  $"{Environment.NewLine}[DataContract]" : "[DataContract]";
 
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -39,12 +38,12 @@ namespace DTE.CORE
                 var column_type = dt.Rows[i]["DataType"].ToString();
                 var isKey = bool.Parse(dt.Rows[i]["IsKey"].ToString());
 
-                var name = _settings.CaseSensitivity ? column_name : Helpers.ModelCreateHelper.ColumnNameToPropName(column_name.ToString());
+                var name = Settings.CaseSensitivity ? column_name : Helpers.ModelCreateHelper.ColumnNameToPropName(column_name.ToString());
                 var cType = GetCsharpType(column_type, allow_null);
                 var comment = "";
                 var annotations = "";
 
-                if (_settings.Comments)
+                if (Settings.Comments)
                 {
                     for (int j = 0; j < table_describe?.Columns.Count; j++)
                     {
@@ -53,30 +52,30 @@ namespace DTE.CORE
                 }
                 if (isKey)
                 {
-                    if (_settings.DataAnnotations && auto_increment)
-                        annotations += $"[{_settings.Attributes.Key}]"+Environment.NewLine;
-                    if (_settings.DataAnnotations && auto_increment == false)
-                        annotations += $"[{_settings.Attributes.ExplicitKey}]" + Environment.NewLine;
+                    if (Settings.DataAnnotations && auto_increment)
+                        annotations += $"[{Settings.Attributes.Key}]"+Environment.NewLine;
+                    if (Settings.DataAnnotations && auto_increment == false)
+                        annotations += $"[{Settings.Attributes.ExplicitKey}]" + Environment.NewLine;
                 }
-                if (_settings.DataMember)
+                if (Settings.DataMember)
                     annotations += $"[DataMember]";
-                if (_settings.FullProp)
+                if (Settings.FullProp)
                     properties = FullPropText(properties, column_name, name, comment, cType, annotations);
                 else
                     properties = PropText(properties, column_name, name, comment, cType, annotations);
 
             }
 
-            return _settings.ClassTemplate?.Replace("[Annotations]", class_annotations)
-                                          ?.Replace("[Prefix]", _settings.Prefix)
+            return Settings.ClassTemplate?.Replace("[Annotations]", class_annotations)
+                                          ?.Replace("[Prefix]", Settings.Prefix)
                                           ?.Replace("[Name]", class_name)
-                                          ?.Replace("[Postfix]", _settings.Postfix)
+                                          ?.Replace("[Postfix]", Settings.Postfix)
                                           ?.Replace("[Properties]", properties);
         }
       
         private string PropText(string model, string column_name, string name, string comment, string cType, string annotations)
         {
-            var template = _settings.PropTemplate;
+            var template = Settings.PropTemplate;
             if (string.IsNullOrEmpty(annotations))
                 template = template.Trim();
 
@@ -91,7 +90,7 @@ namespace DTE.CORE
         }
         private string FullPropText(string model, string column_name, string name, string comment, string cType, string annotations)
         {
-            var template = _settings.FullPropTemplate;
+            var template = Settings.FullPropTemplate;
             if (string.IsNullOrEmpty(annotations))
                 template = template.Trim();
             var propText = template?.Replace("[Type]", cType)
@@ -108,8 +107,8 @@ namespace DTE.CORE
         {
             string backType = "";
 
-            backType = _settings.Types.FirstOrDefault(x => x.CType == type)?.PType ?? "";
-            if (nullable && _settings.Nullable == true)
+            backType = Settings.Types.FirstOrDefault(x => x.CType == type)?.PType ?? "";
+            if (nullable && Settings.Nullable == true)
             {
                 if (backType != "string" && backType != "char")
                 {

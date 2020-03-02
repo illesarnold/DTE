@@ -137,7 +137,7 @@
             </Fluent:RibbonTabItem>
             <Fluent:RibbonTabItem Header="PATTERNS (SOON)">
                 <Fluent:RibbonGroupBox Header="DESIGN PATTERNS">
-                    <Fluent:Button Header="PEASY"  Command="{Binding }">
+                    <Fluent:Button Header="PEASY"  Command="{Binding GeneratePeasyCommand}">
                         <Fluent:Button.LargeIcon>
                             <iconPacks:PackIconMaterial Kind="AutoFix" />
                         </Fluent:Button.LargeIcon>

@@ -1,0 +1,57 @@
+﻿<mahapps:MetroWindow
+    x:Class="DTE.Views.Windows.GeneratePeasyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DTE.Views.Windows"
+        mc:Ignorable="d"
+        Title="Generate Peasy middle tier framework " Height="450" Width="800"
+    xmlns:ViewModels="clr-namespace:DTE.ViewModels"
+    xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+    WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <mahapps:ProgressRing IsActive="{Binding IsLoading}" Grid.RowSpan="2"></mahapps:ProgressRing>
+        <StackPanel Grid.Row="0">
+            <WrapPanel Margin="0 2">
+                <Label Content="Project Name"/>
+                <TextBox Width="150" VerticalAlignment="Center" Text="{Binding ProjectName}"/>
+            </WrapPanel>
+            <Grid Margin="0 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding BusinessProjectPath}"/>
+                <Button Grid.Column="1" Content="Business Project Path" Margin="2 0" Command="{Binding SelectBusinessProjectPathCommand}"/>
+            </Grid>
+            <Grid Margin="0 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding DataLayerProjectPath}"/>
+                <Button Grid.Column="1" Content="DataLayer Project Path" Margin="2 0" Command="{Binding SelectDataLayerProjectPathCommand}"/>
+            </Grid>
+        </StackPanel>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Tables}" IsReadOnly="True" CanUserDeleteRows="True" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Checked" Binding="{Binding Checked}" />
+                <DataGridTextColumn Header="Database" Binding="{Binding DataBaseName}"/>
+                <DataGridTextColumn Header="Table" Binding="{Binding TableName}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button IsDefault="True"  HorizontalAlignment="Right" Margin="5" Content="Create" Height="25" Width="150" Command="{Binding GeneratePeasyCommand}" />
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</mahapps:MetroWindow>
+

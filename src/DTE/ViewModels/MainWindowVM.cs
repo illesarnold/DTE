@@ -89,6 +89,15 @@ namespace DTE.ViewModels
                 return new RelayCommand(_ => FlyOutOpen = true);
             }
         }
+        public RelayCommand GeneratePeasyCommand
+        {
+            get
+            {
+                return new RelayCommand(_ => GeneratePeasy());
+            }
+        }
+
+       
         #endregion
 
         #region Constructor
@@ -107,6 +116,21 @@ namespace DTE.ViewModels
         #endregion
 
         #region Methods
+
+        private void GeneratePeasy()
+        {
+            var selectedTables = GetTablesForModelCreate();
+            if (selectedTables is null)
+                return;
+
+            var selectedNode = GetConnectionByNode();
+            if (selectedNode == null)
+                return;
+
+            var dteCore = Globals.CreateCoreByConnection(selectedNode.ConnectionBuilder);
+            new GeneratePeasyWindow(selectedTables, dteCore).ShowDialog();
+        }
+
         private void SelectToEntity()
         {
             string databaseName = null;
@@ -164,7 +188,12 @@ namespace DTE.ViewModels
             if (selectedTables is null)
                 return;
 
-            new CreateIntoFileWindow(selectedTables).ShowDialog();
+            var selectedNode = GetConnectionByNode();
+            if (selectedNode == null)
+                return;
+
+            var dteCore = Globals.CreateCoreByConnection(selectedNode.ConnectionBuilder);
+            new CreateIntoFileWindow(selectedTables, dteCore).ShowDialog();
         }
 
         public List<Table> GetTablesForModelCreate()

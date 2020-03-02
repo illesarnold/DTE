@@ -1,5 +1,6 @@
 ﻿using DTE.CORE;
 using DTE.CORE.Helpers;
+using DTE.CORE.Interfaces;
 using DTE.Cores;
 using DTE.Domains;
 using Microsoft.Build.Evaluation;
@@ -17,7 +18,6 @@ namespace DTE.ViewModels
 {
     public class CreateIntoFilesVM : DataBindingBase45
     {
-        private static string _lastSelectedPath;
         public TreeViewModel SelectedNode { get; }
         public Database SelectedDatabase { get; }
         public Table SelectedTable { get; }
@@ -46,19 +46,11 @@ namespace DTE.ViewModels
 
         private void SelectFolderPath()
         {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            dialog.SelectedPath = _lastSelectedPath;
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                DestinationPath = dialog.SelectedPath;
+            DestinationPath = Globals.SelectFolderPath() ?? DestinationPath;
         }
-
         private void SelectProjectPath()
         {
-            var dialog = new System.Windows.Forms.OpenFileDialog();
-            dialog.InitialDirectory = _lastSelectedPath;
-            dialog.Filter = "project | *.csproj";
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                ProjectPath = dialog.FileName;
+            ProjectPath = Globals.SelectProjectPath() ?? ProjectPath;
         }
 
 
@@ -66,10 +58,11 @@ namespace DTE.ViewModels
         {
 
         }
-        public CreateIntoFilesVM(List<Table> tables)
+        public CreateIntoFilesVM(List<Table> tables,DTECore dTECore)
         {
             Tables = new ObservableCollection<Table>(tables);
             AllTablesCount = Tables.Count;
+            _dTECore = dTECore;
         }
 
         public async void CreateFilesAsync()
@@ -89,10 +82,7 @@ namespace {NameSpace}
 [code]
 }}
 ";
-                if (SelectedNode == null)
-                    return;
 
-                var dteCore = Globals.CreateCoreByConnection(SelectedNode.ConnectionBuilder);
                 var settings = new DTESettings().Settings;
 
                 AllTablesCount = Tables.Count();
@@ -100,7 +90,7 @@ namespace {NameSpace}
 
                 foreach (var table in Tables)
                 {
-                    await CreateModelThanSave(base_code, dteCore, settings, table.DataBaseName, table);
+                    await CreateModelThanSave(base_code, _dTECore, _dTECore.Settings, table.DataBaseName, table);
                 }
 
             }
@@ -110,9 +100,7 @@ namespace {NameSpace}
             }
         }
 
-       
-
-        private async Task CreateModelThanSave(string base_code, DTECore dteCore, Settings settings, string database, Table table)
+        private async Task CreateModelThanSave(string base_code, DTECore dteCore, ISettings settings, string database, Table table)
         {
             var model_code = await dteCore.CreateModelAsync(database, table.TableName);
             var modelname = GetModelName(settings, table);
@@ -122,7 +110,7 @@ namespace {NameSpace}
             CreatedTablesCount += 1;
         }
 
-        private string GetModelName(Settings settings, Table table)
+        private string GetModelName(ISettings settings, Table table)
         {
             return $@"{settings.Prefix}{DTE.CORE.Helpers.ModelCreateHelper.ColumnNameToPropName(table.TableName.Split('.').Last()).Replace("_", "")}{ settings.Postfix}";
         }
@@ -214,12 +202,13 @@ namespace {NameSpace}
             set { _nameSpace = value; OnPropertyChanged(); }
         }
 
-        private ObservableCollection<Table> _tebles = new ObservableCollection<Table>();
+        private ObservableCollection<Table> _tables = new ObservableCollection<Table>();
+        private readonly DTECore _dTECore;
 
         public ObservableCollection<Table> Tables
         {
-            get { return _tebles; }
-            set { _tebles = value; OnPropertyChanged(); }
+            get { return _tables; }
+            set { _tables = value; OnPropertyChanged(); }
         }
 
 

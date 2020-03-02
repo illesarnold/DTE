@@ -8,16 +8,17 @@ namespace DTE.Architecture
 {
     public class PeasyConstants
     {
-        private const string ReplaceNameSpace = "[namespace]";
+        private const string ReplaceBusinessNameSpace = "[business_namespace]";
+        private const string ReplaceDataLayerNameSpace = "[dal_namespace]";
         private const string ReplaceProjectName = "[projectName]";
         private const string ReplaceModelCode = "[ModelCode]";
         private const string ReplaceModelName = "[ModelName]";
-        private static string PeasyDomainBaseDefaultTemplate = $@"using Peasy;
+        private static string PeasyDomainBaseTemplate = $@"using Peasy;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace {ReplaceNameSpace}
+namespace {ReplaceBusinessNameSpace}
 {{
     public abstract class DomainBase : IDomainObject<long>
     {{
@@ -40,26 +41,26 @@ namespace {ReplaceNameSpace}
     }}
 }}
 ";
-        private static string PeasyDataProxyDefaultTemplate = $@"using Peasy;
-namespace {ReplaceNameSpace}
+        private static string PeasyDataProxyBaseTemplate = $@"using Peasy;
+namespace {ReplaceBusinessNameSpace}.DataProxy
 {{
 {{
-    public interface {ReplaceProjectName}DataProxy<T> : IServiceDataProxy<T, long>
+    public interface I{ReplaceProjectName}DataProxy<T> : IServiceDataProxy<T, long>
     {{
     }}
 }}";
-        private static string PeasyServiceDefaultTemplate = $@"using Peasy;
-using {ReplaceNameSpace}.DataProxy;
+        private static string PeasyServiceBaseTemplate = $@"using Peasy;
+using {ReplaceBusinessNameSpace}.DataProxy;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace {ReplaceNameSpace}
+namespace {ReplaceBusinessNameSpace}
 {{
     public abstract class {ReplaceProjectName}ServiceBase<T> : BusinessServiceBase<T, long> where T : IDomainObject<long>, new()
     {{
-        public OrdersDotComServiceBase(IOrdersDotComDataProxy<T> dataProxy) : base(dataProxy)
+        public {ReplaceProjectName}ServiceBase(I{ReplaceProjectName}Proxy<T> dataProxy) : base(dataProxy)
         {{
         }}
 
@@ -109,47 +110,185 @@ namespace {ReplaceNameSpace}
     }}
 }}
 ";
-        private static string PeasyDomainTemplate = $@"using System.ComponentModel.DataAnnotations;
+        private static string PeasyRepositoryBaseDefaultTemplate = $@"using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
+using Dapper.Contrib.Extensions;
+using System.Threading.Tasks;
+using {ReplaceBusinessNameSpace}.Domain;
+using {ReplaceBusinessNameSpace}.DataProxy;
+using MySql.Data.MySqlClient;
 
-namespace {ReplaceNameSpace}.Domain
+namespace {ReplaceDataLayerNameSpace}.Repository
+{{
+    abstract class RepositoryBase<T> : I{ReplaceProjectName}DataProxy<T> where T : DomainBase, new()
+    {{
+        protected IDbConnection _dbConnection = null;
+        public BaseRepository(IDbConnection dbConnection)
+        {{
+            _dbConnection = dbConnection;
+        }}
+
+        protected string _baseTableName = GetTableName(typeof(T));
+        public bool SupportsTransactions => true;
+
+        public bool IsLatencyProne => false;
+
+        public void Delete(long id)
+        {{
+            CreateConnection().Delete(new T() {{ ID = id }});
+        }}
+
+        public async Task DeleteAsync(long id)
+        {{
+            await CreateConnection().DeleteAsync(new T() {{ ID = id }});
+        }}
+
+        public IEnumerable<T> GetAll()
+        {{
+            return CreateConnection().GetAll<T>();
+        }}
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {{
+            return await CreateConnection().GetAllAsync<T>();
+        }}
+
+        public T GetByID(long id)
+        {{
+            return CreateConnection().Get<T>(id);
+        }}
+
+        public async Task<T> GetByIDAsync(long id)
+        {{
+            return await CreateConnection().GetAsync<T>(id);
+        }}
+
+        public T Insert(T entity)
+        {{
+            var id = CreateConnection().Insert(entity);
+            return CreateConnection().Get<T>(id);
+        }}
+
+        public async Task<T> InsertAsync(T entity)
+        {{
+            var id = await CreateConnection().InsertAsync(entity);
+            return await CreateConnection().GetAsync<T>(id);
+        }}
+
+        public T Update(T entity)
+        {{
+            CreateConnection().Update(entity);
+            return CreateConnection().Get<T>(entity.ID);
+        }}
+
+        public async Task<T> UpdateAsync(T entity)
+        {{
+            await CreateConnection().UpdateAsync(entity);
+            return await CreateConnection().GetAsync<T>(entity.ID);
+        }}
+
+        public IDbConnection CreateConnection()
+        {{
+            if (_dbConnection is MySqlConnection)
+                return new MySqlConnection(_dbConnection.ConnectionString);
+            if (_dbConnection is MySqlConnection)
+                return new SqlConnection(_dbConnection.ConnectionString);
+
+            return null;
+        }}
+        private static string GetTableName(Type obj)
+        {{
+            var tAttribute = (TableAttribute)obj.GetCustomAttributes(typeof(TableAttribute), true)[0];
+
+            return tAttribute.Name;
+        }}
+    }}
+}}
+
+";
+        private static string PeasyDomainTemplate = $@"using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace {ReplaceBusinessNameSpace}.Domain
 {{
     {ReplaceModelCode}
 }}";
-        private static string PeasyDataProxyTemplate = $@"using Orders.com.BLL.Domain;
+        private static string PeasyDataProxyTemplate = $@"using {ReplaceBusinessNameSpace}.Domain;
 
-namespace {ReplaceNameSpace}.DataProxy
+namespace {ReplaceBusinessNameSpace}.DataProxy
 {{
     public interface I{ReplaceModelName}DataProxy : I{ReplaceProjectName}DataProxy<{ReplaceModelName}>
     {{
     }}
 }}";
-        private static string PeasyServiceTemplate = $@"using {ReplaceNameSpace}.Domain;
+        private static string PeasyServiceTemplate = $@"using {ReplaceBusinessNameSpace}.Domain;
 using Peasy;
 
-namespace {ReplaceNameSpace}.Services
+namespace {ReplaceBusinessNameSpace}.Services
 {{
     public interface I{ReplaceModelName}Service : IService<{ReplaceModelName}, long>
     {{
     }}
 }}";
+        private static string PeasyRepositoryTemplate = $@"using  {ReplaceBusinessNameSpace}.Domain;
+using {ReplaceBusinessNameSpace}.DataProxy;
 
+namespace {ReplaceDataLayerNameSpace}.Repository
+{{
+    public class {ReplaceModelName}Repository : RepositoryBase<{ReplaceModelName}>, I{ReplaceModelName}DataProxy
+    {{
+    }}
+}}";
 
-        public static string GetDomainTemplate(string nameSpace,string modelCode)
+        public static string GetDomainTemplate(string nameSpace, string modelCode)
         {
-            return PeasyDomainTemplate.Replace(ReplaceNameSpace, nameSpace).Replace(ReplaceModelCode, modelCode);
+            return PeasyDomainTemplate.Replace(ReplaceBusinessNameSpace, nameSpace).Replace(ReplaceModelCode, modelCode);
         }
-        public static string GetDataProxyTemplate(string nameSpace,string projectName, string modelName)
+        public static string GetDataProxyTemplate(string nameSpace, string projectName, string modelName)
         {
             return PeasyDataProxyTemplate
-                .Replace(ReplaceNameSpace, nameSpace)
+                .Replace(ReplaceBusinessNameSpace, nameSpace)
                 .Replace(ReplaceProjectName, projectName)
                 .Replace(ReplaceModelName, modelName);
         }
         public static string GetServiceTemplate(string nameSpace, string modelName)
         {
-            return PeasyServiceTemplate.Replace(ReplaceNameSpace, nameSpace).Replace(ReplaceModelName, modelName);
+            return PeasyServiceTemplate.Replace(ReplaceBusinessNameSpace, nameSpace).Replace(ReplaceModelName, modelName);
         }
-
+        public static string GetRepositoryTemplate(string dataLayerNameSpace, string businessNameSpace, string modelName)
+        {
+            return PeasyRepositoryTemplate
+               .Replace(ReplaceDataLayerNameSpace, dataLayerNameSpace)
+               .Replace(ReplaceBusinessNameSpace, businessNameSpace)
+               .Replace(ReplaceModelName, modelName);
+        }
+        public static string GetDomainBaseTemplate(string businessNameSpace)
+        {
+            return PeasyDomainBaseTemplate
+               .Replace(ReplaceBusinessNameSpace, businessNameSpace);
+        }
+        public static string GetDataProxyBaseTemplate(string businessNameSpace, string projectName)
+        {
+            return PeasyDataProxyBaseTemplate
+               .Replace(ReplaceBusinessNameSpace, businessNameSpace)
+               .Replace(ReplaceProjectName, projectName);
+        }
+        public static string GetServiceBaseTemplate(string businessNameSpace, string projectName)
+        {
+            return PeasyServiceBaseTemplate
+               .Replace(ReplaceBusinessNameSpace, businessNameSpace)
+               .Replace(ReplaceProjectName, projectName);
+        }
+        public static string GetRepositoryBaseTemplate(string dataLayerNameSpace, string businessNameSpace, string projectName)
+        {
+            return PeasyRepositoryBaseDefaultTemplate
+               .Replace(ReplaceDataLayerNameSpace, dataLayerNameSpace)
+               .Replace(ReplaceBusinessNameSpace, businessNameSpace)
+               .Replace(ReplaceProjectName, projectName);
+        }
     }
 }
 
