@@ -10,7 +10,7 @@ using MySql.Data.MySqlClient;
 
 namespace [DataLayerNameSpace].Repository
 {
-    abstract class BaseRepository<T> : I[ProjectName]DataProxy<T> where T : BaseDomain, new()
+    public abstract class BaseRepository<T> : I[ProjectName]DataProxy<T> where T : BaseDomain, new()
     {
         protected IDbConnection _dbConnection = null;
         public BaseRepository(IDbConnection dbConnection)
