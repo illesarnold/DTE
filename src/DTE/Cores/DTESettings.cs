@@ -1,4 +1,5 @@
 ﻿using DTE.Domains;
+using ICSharpCode.AvalonEdit.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,10 +12,14 @@ namespace DTE.Cores
 {
     public class DTESettings : DataBindingBase45
     {
+        private const string ProperyTemplatPath = @"Templates\Property.tpl";
+        private const string FullPropertyTemplatePath = @"Templates\FullProperty.tpl";
+        private const string ClassPath = @"Templates\Class.tpl";
         private string fileName = "settings";
         public DTESettings()
         {
             SettingsDeserialize();
+         
         }
         Settings _settings = new Settings();
         public Settings Settings
@@ -40,7 +45,9 @@ namespace DTE.Cores
                 Settings = (Settings)serializer.Deserialize(reader);
                 reader.Close();
             }
-
+            _settings.PropTemplate = File.ReadAllText(ProperyTemplatPath);
+            _settings.FullPropTemplate = File.ReadAllText(FullPropertyTemplatePath);
+            _settings.ClassTemplate = File.ReadAllText(ClassPath);
         }
         public void SettingsSerialize()
         {
@@ -48,6 +55,10 @@ namespace DTE.Cores
             FileStream fs = new FileStream(fileName, FileMode.Create);
             serializer.Serialize(fs, Settings);
             fs.Close();
+
+            File.WriteAllText(ProperyTemplatPath, _settings.PropTemplate);
+            File.WriteAllText(FullPropertyTemplatePath, _settings.FullPropTemplate);
+            File.WriteAllText(ClassPath, _settings.ClassTemplate);
         }
     }
 }

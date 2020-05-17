@@ -70,7 +70,7 @@ namespace DTE.ViewModels
         }
         private async void GeneratePeasyAsync()
         {
-            isLoading = true;
+            IsLoading = true;
 
             try
             {
@@ -83,7 +83,7 @@ namespace DTE.ViewModels
                 MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
 
-            isLoading = false;
+            IsLoading = false;
         }
 
     }

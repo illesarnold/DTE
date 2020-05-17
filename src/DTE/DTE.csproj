@@ -121,7 +121,7 @@
     </ApplicationDefinition>
     <Compile Include="Architecture\Microservice\Microservice.cs" />
     <Compile Include="Architecture\Peasy\Peasy.cs" />
-    <Compile Include="Architecture\Peasy\PeasyConstants.cs" />
+    <Compile Include="Architecture\Peasy\PeasyHelper.cs" />
     <Compile Include="ConnectionCore\Builders\BuilderBase.cs" />
     <Compile Include="ConnectionCore\Builders\NpgSQLConnectionBuilder.cs" />
     <Compile Include="ConnectionCore\Builders\MSSQLConnectionBuilder.cs" />
@@ -248,6 +248,39 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="Templates\PeasyBaseDataProxy.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyBaseDomain.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyBaseRepository.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyBaseService.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Class.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\FullProperty.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyDataProxy.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyDomain.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyRepository.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\PeasyService.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Property.tpl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="dte-logo-v1.ico" />
     <Content Include="settings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

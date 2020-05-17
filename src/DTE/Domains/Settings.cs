@@ -184,13 +184,16 @@ namespace DTE.Domains
                 OnPropertyChanged();
             }
         }
-        public string FullPropTemplate { get => fullPropTemplate; set { fullPropTemplate = value; OnPropertyChanged(); } }
-        public string PropTemplate { get => _propTemplate; set { _propTemplate = value; OnPropertyChanged(); } }
-        public string ClassTemplate { get => _classTemplate; set { _classTemplate = value; OnPropertyChanged(); } }
+
         public string FilePrefix { get => _filePrefix; set { _filePrefix = value; OnPropertyChanged(); } }
         public string FilePostfix { get => _filePostfix; set { _filePostfix = value; OnPropertyChanged(); } }
 
-
+        [XmlIgnore]
+        public string FullPropTemplate { get => fullPropTemplate; set { fullPropTemplate = value; OnPropertyChanged(); } }
+        [XmlIgnore]
+        public string PropTemplate { get => _propTemplate; set { _propTemplate = value; OnPropertyChanged(); } }
+        [XmlIgnore]
+        public string ClassTemplate { get => _classTemplate; set { _classTemplate = value; OnPropertyChanged(); } }
         [XmlIgnore]
         public string AccentColor
         {
