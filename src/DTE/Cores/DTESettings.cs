@@ -19,7 +19,6 @@ namespace DTE.Cores
         public DTESettings()
         {
             SettingsDeserialize();
-         
         }
         Settings _settings = new Settings();
         public Settings Settings

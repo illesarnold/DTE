@@ -81,7 +81,7 @@ namespace [DataLayerNameSpace].Repository
         {
             if (_dbConnection is MySqlConnection)
                 return new MySqlConnection(_dbConnection.ConnectionString);
-            if (_dbConnection is MySqlConnection)
+            if (_dbConnection is SqlConnection)
                 return new SqlConnection(_dbConnection.ConnectionString);
 
             return null;
