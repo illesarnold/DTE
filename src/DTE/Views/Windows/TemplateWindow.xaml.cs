@@ -35,5 +35,10 @@ namespace DTE.Views.Windows
         {
             this.Close();
         }
+
+        private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            (sender as TextBox).SelectAll();
+        }
     }
 }

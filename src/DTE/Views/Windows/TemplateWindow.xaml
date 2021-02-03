@@ -18,14 +18,20 @@
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <ListBox Margin="5" ItemsSource="{Binding Labels}" >
-            <ListBox.ItemsPanel>
+        <ItemsControl  Margin="5" ItemsSource="{Binding Labels}" >
+            <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" />
                 </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-           
-        </ListBox>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel >
+                        <TextBox MouseDoubleClick="TextBox_MouseDoubleClick" Margin="3"  IsReadOnly="True" Text="{Binding Path=., Mode=OneWay}" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
         <TextBox
             Grid.Row="1"
