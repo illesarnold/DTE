@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DTE.CORE
@@ -11,12 +12,16 @@ namespace DTE.CORE
     public class DTECore : IDTE
     {
         public IDTE DTEService { get; set; }
+
+        private const string annotationTag = "[Annotations]";
         public readonly ISettings Settings;
         public DTECore(SupportedConnectionsTypes type, string connection_String, ISettings settings)
         {
             Settings = settings;
             DTEService = DteCoreFactory.CreateDTECore(type, connection_String);
         }
+
+        readonly string indent = "\t";
 
         private string CreateModel(DataTable dt, DataTable table_describe = null)
         {
@@ -26,9 +31,9 @@ namespace DTE.CORE
             string properties = "";
 
             if (Settings.DataAnnotations)
-                class_annotations += $"[{Settings.Attributes.Table}(\"{tablename}\")]"+Environment.NewLine;
+                class_annotations += $"[{Settings.Attributes.Table}(\"{tablename}\")]";
             if (Settings.DataMember)
-                class_annotations += string.IsNullOrEmpty(class_annotations) ?  $"{Environment.NewLine}[DataContract]" : "[DataContract]";
+                class_annotations += string.IsNullOrEmpty(class_annotations) ?  $"[DataContract]" : $"{Environment.NewLine}[DataContract]";
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -47,18 +52,18 @@ namespace DTE.CORE
                 {
                     for (int j = 0; j < table_describe?.Columns.Count; j++)
                     {
-                        comment += $"  //  {table_describe.Columns[j].ColumnName}: {table_describe?.Rows[i][j].ToString()} ";
+                        comment += $"// {table_describe.Columns[j].ColumnName}: {table_describe?.Rows[i][j].ToString()} ";
                     }
                 }
                 if (isKey)
                 {
                     if (Settings.DataAnnotations && auto_increment)
-                        annotations += $"[{Settings.Attributes.Key}]"+Environment.NewLine;
+                        annotations += $"[{Settings.Attributes.Key}]";
                     if (Settings.DataAnnotations && auto_increment == false)
-                        annotations += $"[{Settings.Attributes.ExplicitKey}]" + Environment.NewLine;
+                        annotations += $"[{Settings.Attributes.ExplicitKey}]";
                 }
                 if (Settings.DataMember)
-                    annotations += $"[DataMember]";
+                    annotations += string.IsNullOrEmpty(annotations) ? $"[DataMember]" : Environment.NewLine+"[DataMember]";
                 if (Settings.FullProp)
                     properties = FullPropText(properties, column_name, name, comment, cType, annotations);
                 else
@@ -66,16 +71,23 @@ namespace DTE.CORE
 
             }
 
-            return Settings.ClassTemplate?.Replace("[Annotations]", class_annotations)
+            var classString = Settings.ClassTemplate?.Replace("[Annotations]", class_annotations)
                                           ?.Replace("[Prefix]", Settings.Prefix)
                                           ?.Replace("[Name]", class_name)
                                           ?.Replace("[Postfix]", Settings.Postfix)
                                           ?.Replace("[Properties]", properties);
+
+            return classString;
         }
       
-        private string PropText(string model, string column_name, string name, string comment, string cType, string annotations)
+        private string PropText(string properties, string column_name, string name, string comment, string cType, string annotations)
         {
             var template = Settings.PropTemplate;
+            return ReplaceTemplateTags(ref properties, column_name, name, comment, cType, annotations, ref template);
+        }
+
+        private string ReplaceTemplateTags(ref string properties, string column_name, string name, string comment, string cType, string annotations, ref string template)
+        {
             if (string.IsNullOrEmpty(annotations))
                 template = template.Trim();
 
@@ -83,25 +95,20 @@ namespace DTE.CORE
                                         ?.Replace("[PrivateName]", column_name)
                                         ?.Replace("[PublicName]", name)
                                         ?.Replace("[Comment]", comment)
-                                        ?.Replace("[Annotations]", annotations);
-            
+                                        ?.Replace(annotationTag, string.IsNullOrEmpty(annotations) ? annotationTag : annotations);
 
-            return model += propText+Environment.NewLine;
+            if (!string.IsNullOrEmpty(properties))
+                propText = Environment.NewLine + propText;
+
+            var identedText = indent + propText.Replace("\n", "\n" + indent);
+            var finalText = string.Join(Environment.NewLine, identedText.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Where(x => x.Contains(annotationTag) == false));
+            return properties += finalText;
         }
-        private string FullPropText(string model, string column_name, string name, string comment, string cType, string annotations)
+
+        private string FullPropText(string properties, string column_name, string name, string comment, string cType, string annotations)
         {
             var template = Settings.FullPropTemplate;
-            if (string.IsNullOrEmpty(annotations))
-                template = template.Trim();
-            var propText = template?.Replace("[Type]", cType)
-                                          ?.Replace("[PrivateName]", column_name)
-                                          ?.Replace("[PublicName]", name)
-                                          ?.Replace("[Comment]", comment)
-                                          ?.Replace("[Annotations]", annotations);
-
-            if (string.IsNullOrEmpty(annotations))
-                propText.Trim();
-            return model += propText + Environment.NewLine;
+            return ReplaceTemplateTags(ref properties, column_name, name, comment, cType, annotations, ref template);
         }
         private string GetCsharpType(string type, bool nullable)
         {

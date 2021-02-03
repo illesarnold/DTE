@@ -1,1 +1,2 @@
-﻿  [Annotations]    public [Type] [PublicName] { get; set; }[Comment]
+﻿[Annotations]
+public [Type] [PublicName] { get; set; } [Comment]

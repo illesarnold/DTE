@@ -1,3 +1,5 @@
-﻿[Annotations]public class [Prefix][Name][Postfix] 
+﻿[Annotations]
+public class [Prefix][Name][Postfix] 
 {
-[Properties] }
+[Properties] 
+}

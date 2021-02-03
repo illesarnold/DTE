@@ -24,16 +24,16 @@
             </WrapPanel>
             <Grid Margin="0 2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
                 <TextBox Text="{Binding BusinessProjectPath}"/>
                 <Button Grid.Column="1" Content="Business Project Path" Margin="2 0" Command="{Binding SelectBusinessProjectPathCommand}"/>
             </Grid>
             <Grid Margin="0 2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
                 <TextBox Text="{Binding DataLayerProjectPath}"/>
                 <Button Grid.Column="1" Content="DataLayer Project Path" Margin="2 0" Command="{Binding SelectDataLayerProjectPathCommand}"/>

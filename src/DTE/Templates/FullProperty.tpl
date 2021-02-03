@@ -1,3 +1,8 @@
-﻿ private [Type] _[PrivateName]; [Annotations]
-    public [Type] [PublicName] { get =&gt; _[PrivateName]; set =&gt; this.RaiseAndSetIfChanged(ref  _[PrivateName], value); } [Comment]
-  
+﻿private [Type] _[PrivateName]; [Comment]
+
+[Annotations]
+public [Type] [PublicName]
+{
+    get => _[PrivateName];
+    set => _[PrivateName] = value;
+}
