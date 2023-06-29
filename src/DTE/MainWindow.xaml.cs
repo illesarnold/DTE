@@ -21,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using MahApps.Metro.IconPacks;
 
 namespace DTE
 {
@@ -110,10 +111,11 @@ namespace DTE
 
         private void DatabaseRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            Database db = btn.Tag as Database;
-            vm.RefreshDatabaseAsync(db);
-                
+            if (sender is Button btn)
+            {                
+                Database db = btn.Tag as Database;
+                vm.RefreshDatabaseAsync(db);
+            }           
         }
 
         #region TitelBar

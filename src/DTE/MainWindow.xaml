@@ -220,9 +220,11 @@
                 <TreeView
                     x:Name="TreeViewConn"
                     ItemsSource="{Binding XMLCore.Connections}"
+                    VirtualizingStackPanel.IsVirtualizing="True"
+                    VirtualizingStackPanel.VirtualizationMode="Recycling"
                     SelectedItemChanged="TreeView_SelectedItemChanged">
                     <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Databases}">
+                        <HierarchicalDataTemplate ItemsSource="{Binding Databases}" >
                             <Grid Margin="2">
                                 <ProgressBar
                                     Panel.ZIndex="2"
@@ -236,7 +238,6 @@
                                     <!--<iconPacks:PackIconSimpleIcons Kind="{Binding Connection.Icon}" Margin="0 0 5 0"></iconPacks:PackIconSimpleIcons>-->
                                     <TextBlock Text="{Binding ConnectionBuilder.ConnectionName}" />
                                 </WrapPanel>
-
                                 <Button
                                     HorizontalAlignment="Right"
                                     Click="ConnectRefreshButton_Click"
@@ -257,7 +258,7 @@
                                             <iconPacks:PackIconMaterial
                                                 Margin="0,0,2,0"
                                                 Padding="2"
-                                                Kind="Database" />
+                                                Kind="Database"                                                 />
                                             <TextBlock Text="{Binding DatabaseName}" />
                                         </WrapPanel>
 

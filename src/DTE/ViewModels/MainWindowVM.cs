@@ -667,10 +667,7 @@ namespace DTE.ViewModels
             }
 
         }
-
-
         #endregion
-
     }
 
 }
