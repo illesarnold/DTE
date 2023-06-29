@@ -135,7 +135,7 @@
                 </Fluent:RibbonGroupBox>
 
             </Fluent:RibbonTabItem>
-            <Fluent:RibbonTabItem Header="PATTERNS (SOON)">
+            <!--<Fluent:RibbonTabItem Header="PATTERNS (SOON)">
                 <Fluent:RibbonGroupBox Header="DESIGN PATTERNS">
                     <Fluent:Button Header="PEASY"  Command="{Binding GeneratePeasyCommand}">
                         <Fluent:Button.LargeIcon>
@@ -161,7 +161,7 @@
                         </Fluent:Button.LargeIcon>
                     </Fluent:Button>
                 </Fluent:RibbonGroupBox>
-            </Fluent:RibbonTabItem>
+            </Fluent:RibbonTabItem>-->
             <Fluent:RibbonTabItem Header="SETTINGS">
                 <Fluent:RibbonGroupBox Header="SETTINGS" >
                     <Fluent:Button  Header="ANNOTAIONS" Command="{Binding DataAnnotationsSettingsCommand}">
