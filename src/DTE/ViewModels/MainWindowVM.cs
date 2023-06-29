@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using DTE.Domains.Interfaces;
 using DTE.CORE;
 using DTE.CORE.Helpers;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace DTE.ViewModels
 {
@@ -321,6 +322,8 @@ namespace DTE.ViewModels
         {
             if (SelectedNode == null)
                 GetFirstCheckedConnection();
+
+            if (SelectedNode == null) return null;
 
             return (SelectedNode as ITreeViewModel).ParentTreeBase;
         }
