@@ -72,11 +72,12 @@ namespace DTE.Domains
                         Tables = new ObservableCollection<Table>()
                     };
 
-                    var tables = await dteCore.GetTablesAsync(dbName);
-                    foreach (var tableName in tables)
-                    {
-                        db.Tables.Add(new Table() { TableName = tableName, ParentTreeBase = this, DataBaseName = db.DatabaseName });
-                    }
+                    //cost too much time to load all tables in huge database
+                    //var tables = await dteCore.GetTablesAsync(dbName);
+                    //foreach (var tableName in tables)
+                    //{
+                    //    db.Tables.Add(new Table() { TableName = tableName, ParentTreeBase = this, DataBaseName = db.DatabaseName });
+                    //}
 
                     Databases.Add(db);
                 }

@@ -135,7 +135,7 @@
                 </Fluent:RibbonGroupBox>
 
             </Fluent:RibbonTabItem>
-            <Fluent:RibbonTabItem Header="PATTERNS (SOON)">
+            <!--<Fluent:RibbonTabItem Header="PATTERNS (SOON)">
                 <Fluent:RibbonGroupBox Header="DESIGN PATTERNS">
                     <Fluent:Button Header="PEASY"  Command="{Binding GeneratePeasyCommand}">
                         <Fluent:Button.LargeIcon>
@@ -161,7 +161,7 @@
                         </Fluent:Button.LargeIcon>
                     </Fluent:Button>
                 </Fluent:RibbonGroupBox>
-            </Fluent:RibbonTabItem>
+            </Fluent:RibbonTabItem>-->
             <Fluent:RibbonTabItem Header="SETTINGS">
                 <Fluent:RibbonGroupBox Header="SETTINGS" >
                     <Fluent:Button  Header="ANNOTAIONS" Command="{Binding DataAnnotationsSettingsCommand}">
@@ -220,30 +220,32 @@
                 <TreeView
                     x:Name="TreeViewConn"
                     ItemsSource="{Binding XMLCore.Connections}"
+                    VirtualizingStackPanel.IsVirtualizing="True"
+                    VirtualizingStackPanel.VirtualizationMode="Recycling"                    
                     SelectedItemChanged="TreeView_SelectedItemChanged">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="Width" Value="auto"/>
+                            <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    
                     <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Databases}">
+                        <HierarchicalDataTemplate ItemsSource="{Binding Databases}" >
                             <Grid Margin="2">
                                 <ProgressBar
                                     Panel.ZIndex="2"
                                     IsIndeterminate="{Binding LoadConnection}"
                                     Visibility="{Binding LoadConnection, Converter={StaticResource VisToBoolean}}" />
                                 <WrapPanel>
-                                    <Image
-                                        Width="15"
+                                    <iconPacks:PackIconMaterial
                                         Margin="0,0,5,0"
-                                        Source="{Binding ConnectionBuilder.Icon}" />
-                                    <!--<iconPacks:PackIconSimpleIcons Kind="{Binding Connection.Icon}" Margin="0 0 5 0"></iconPacks:PackIconSimpleIcons>-->
+                                        Padding="2"
+                                        Kind="Server"/>
                                     <TextBlock Text="{Binding ConnectionBuilder.ConnectionName}" />
                                 </WrapPanel>
-
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Click="ConnectRefreshButton_Click"
-                                    Tag="{Binding ConnectionBuilder.Id}">
-                                    <iconPacks:PackIconModern Padding="2" Kind="Refresh" />
-                                </Button>
                             </Grid>
+
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <HierarchicalDataTemplate ItemsSource="{Binding Tables}">
                                     <Grid Margin="2">
@@ -255,18 +257,11 @@
                                         <WrapPanel>
                                             <CheckBox IsChecked="{Binding Checked}" />
                                             <iconPacks:PackIconMaterial
-                                                Margin="0,0,2,0"
+                                                Margin="0,0,5,0"
                                                 Padding="2"
-                                                Kind="Database" />
+                                                Kind="Database"/>
                                             <TextBlock Text="{Binding DatabaseName}" />
                                         </WrapPanel>
-
-                                        <Button
-                                            HorizontalAlignment="Right"
-                                            Click="DatabaseRefreshButton_Click"
-                                            Tag="{Binding}">
-                                            <iconPacks:PackIconModern Padding="2" Kind="Refresh" />
-                                        </Button>
                                     </Grid>
 
                                     <HierarchicalDataTemplate.ItemTemplate>
@@ -274,10 +269,11 @@
                                             <WrapPanel>
                                                 <CheckBox IsChecked="{Binding Checked}" />
                                                 <iconPacks:PackIconMaterial
-                                                    Margin="0,0,2,0"
+                                                    VerticalAlignment="Center"
+                                                    Margin="4,3,0,3"
                                                     Padding="2"
                                                     Kind="Table" />
-                                                <TextBlock Text="{Binding TableName}" />
+                                                <TextBlock Text="{Binding TableName}" VerticalAlignment="Center"/>
                                             </WrapPanel>
                                         </DataTemplate>
                                     </HierarchicalDataTemplate.ItemTemplate>
@@ -327,7 +323,7 @@
                             IsEnabled="{Binding EditEnable}">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconModern
-                                    Height="30"
+                                    Height="15"
                                     Margin="0,0,2,0"
                                     Padding="2"
                                     Kind="Delete" />

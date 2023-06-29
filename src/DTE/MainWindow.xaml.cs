@@ -21,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using MahApps.Metro.IconPacks;
 
 namespace DTE
 {
@@ -110,10 +111,11 @@ namespace DTE
 
         private void DatabaseRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            Database db = btn.Tag as Database;
-            vm.RefreshDatabaseAsync(db);
-                
+            if (sender is Button btn)
+            {                
+                Database db = btn.Tag as Database;
+                vm.RefreshDatabaseAsync(db);
+            }           
         }
 
         #region TitelBar
@@ -137,5 +139,24 @@ namespace DTE
         public static readonly DependencyProperty TitleBarProperty = TitleBarPropertyKey.DependencyProperty;
 
         #endregion
+
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TreeViewItem s)
+            {
+                if (!s.IsSelected) return;
+
+                if (s.DataContext is Database db)
+                {                    
+                    vm.RefreshDatabaseAsync(db);
+                }
+                else if (s.DataContext is DTE.Domains.TreeViewModel twm)
+                {
+                    var id = twm.ConnectionBuilder.Id.ToString();
+                    vm.RefreshConnAsync(id);
+                }
+                var context = s.DataContext;                
+            }
+        }
     }
 }

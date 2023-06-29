@@ -89,17 +89,18 @@ namespace DTE.CORE.Cores
                         then TABLE_SCHEMA+'.'+TABLE_NAME +' (view)'
                         else TABLE_SCHEMA+'.'+TABLE_NAME
                    end 
-                   FROM [{database_name}].information_schema.TABLES");
+                   FROM [{database_name}].INFORMATION_SCHEMA.TABLES");
         }
 
         public async Task<IEnumerable<string>> GetTablesAsync(string database_name)
         {
-            return await _connectionFactory.CreateConnection().QueryAsync<string>($@"
-            SELECT  case
+            var sql = $@"SELECT case
                     when TABLE_TYPE = 'VIEW'
                          then TABLE_SCHEMA + '.' + TABLE_NAME + ' (view)'
                          else TABLE_SCHEMA + '.' + TABLE_NAME
-                    end FROM[{database_name}].information_schema.TABLES");
+                    end FROM [{database_name}].INFORMATION_SCHEMA.TABLES";
+
+            return await _connectionFactory.CreateConnection().QueryAsync<string>(sql);
         }
     }
     
